@@ -28,6 +28,7 @@ function apiFactory(...stuff) {
   return function (routes) {
     this.with = apiFactory;
 
+    // Some actually useful code here
 
     return routes;
   };
