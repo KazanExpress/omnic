@@ -43,11 +43,15 @@ type RouteConfig = LeafConfig | Method | Method[] | MethodConfigMap;
 
 interface RouteTree extends BaseRoute {
   [path: string]: Route | ((...params) => Route)
+  $config?: Config
 }
 
 type Route = RouteTree | RouteConfig;
 
-type Adapter = { request(customConfig: RequestInit): Promise<any> };
+type Adapter = {
+  processParams(url: string, config: RequestInit): [string, RequestInit]
+  request(customConfig: RequestInit): Promise<any>
+};
 type Interceptor = (url: string, response: any) => any;
 type API = ((routes?: Route) => any) & { with: apiBuilder };
 
