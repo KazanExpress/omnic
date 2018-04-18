@@ -1,7 +1,7 @@
 {
   "name": "omnic",
   "version": "0.0.0",
-  "description": "A declarative API client based on fetch",
+  "description": "Epic declarative API client",
   "main": "index.js",
   "types": "types",
   "scripts": {
