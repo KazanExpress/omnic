@@ -6,11 +6,16 @@ const customAPI = api.with({
   return response;
 })
 
-const API = customAPI({
+let API = customAPI({
   main: {
-    search: id => ({
-
-    })
+    method: {
+      // config here
+    }
   }
 })
 
+console.log(await API.main.method());
+
+API = api('GET');
+
+console.log(await API());

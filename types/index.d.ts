@@ -23,12 +23,12 @@ type Method = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'OPTIONS' | 'CONNECT' | 'TRACE
 type Hook = (url: string, config, next: () => void) => void;
 
 interface BaseRoute {
-  beforeEach: Hook
-  afterEach: Hook
+  beforeEach?: Hook
+  afterEach?: Hook
 }
 
-interface RouteConfig extends BaseRoute {
-  method: Method
+interface Config extends BaseRoute {
+  method?: Method
   path?: string
   params?: Params
   body?: Body
@@ -44,9 +44,15 @@ interface RouteConfig extends BaseRoute {
   signal?: Signal
 }
 
-interface Route extends BaseRoute {
+interface RouteTree extends BaseRoute {
   [path: string]: RouteConfig | BaseRoute | ((...params) => BaseRoute)
 }
+
+type RouteConfig = Config | Method | Method[] | {
+  [method: Method]: Config
+};
+
+type Route = RouteTree | RouteConfig;
 
 interface Adapter {
 

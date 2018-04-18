@@ -1,8 +1,9 @@
+const fromPath = (obj, path) => path.reduce((o, i) => (o === Object(o) ? o[i] : o), obj);
+const isString = v => !!v.valueOf && typeof v.valueOf() === 'string';
+
 /**
- *
- *
- * @param {Array<RouteConfig | Adapter | Interceptor>} stuff
- * @returns {API} instance
+ * @param { Array<RouteConfig | Adapter | Interceptor> } stuff
+ * @returns { API } instance
  */
 function apiFactory(...stuff) {
   var adapter = null;     // default fetch adapter here
@@ -28,9 +29,26 @@ function apiFactory(...stuff) {
   return function (routes) {
     this.with = apiFactory;
 
-    // Some actually useful code here
 
-    return routes;
+    let finalAPI = {};
+
+    return (function processRoute(route, path = []) {
+      const finalRoute = fromPath(finalAPI, path);
+
+      for (const key in route) {
+        finalRoute.$_path = [...path];
+
+        if (key === 'beforeEach' || key === 'afterEach') {
+          finalRoute[key] = route[key];
+        } else if (typeof route[key] !== 'function') {
+
+        } else {
+          finalRoute[key] = param => processRoute(route[key](param), path.concat([key]));
+        }
+      }
+
+      return finalRoute;
+    }(routes));
   };
 }
 
