@@ -1,2 +1,2 @@
-# apic
-Epic declarative API Client
+# omnic
+Declarative API Client

@@ -1,0 +1,19 @@
+{
+  "name": "omnic",
+  "version": "0.0.0",
+  "description": "Declarative API Client",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KazanExpress/omnic.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/KazanExpress/omnic/issues"
+  },
+  "homepage": "https://github.com/KazanExpress/omnic#readme"
+}
