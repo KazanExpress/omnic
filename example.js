@@ -14,7 +14,9 @@ let API = customAPI({
   }
 })
 
-console.log(await API.main.method());
+await API.main.method({
+  // Custom Fetch Config here
+});
 
 API = api('GET');
 

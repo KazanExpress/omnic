@@ -1,5 +1,33 @@
-const fromPath = (obj, path) => path.reduce((o, i) => (o === Object(o) ? o[i] : o), obj);
+const methods = ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'CONNECT', 'TRACE', 'PATCH'];
+
+const fromPath = (obj, path, callback) => path.reduce((o, i) => {
+  const result = (o === Object(o) ? o[i] : o);
+  callback && callback(result);
+  return result;
+}, obj);
 const isString = v => !!v.valueOf && typeof v.valueOf() === 'string';
+const isFunction = v => typeof v === 'function';
+
+const transformRoute = (finalAPI, path, route, adapter, config) => {
+  const request = customConfig => adapter.request({ ...config, ...customConfig });
+
+  if (isString(route)) {
+    return request;
+  } else if (Array.isArray(route)) {
+    const finalRoute = {};
+    route.forEach(r => finalRoute[r] = request);
+    return finalRoute;
+  } else {
+    // TODO
+
+    const routeMethods = Object.keys(route).filter(key => ~methods.indexOf(key));
+    if (routeMethods.length > 0) {
+
+    } else {
+
+    }
+  }
+}
 
 /**
  * @param { Array<RouteConfig | Adapter | Interceptor> } stuff
@@ -26,9 +54,8 @@ function apiFactory(...stuff) {
     });
   }
 
-  return function (routes) {
+  return function (routeTree) {
     this.with = apiFactory;
-
 
     let finalAPI = {};
 
@@ -48,7 +75,7 @@ function apiFactory(...stuff) {
       }
 
       return finalRoute;
-    }(routes));
+    }(routeTree));
   };
 }
 

@@ -20,7 +20,7 @@ type Params = { [key: string]: string };
 
 type Method = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'OPTIONS' | 'CONNECT' | 'TRACE' | 'PATCH';
 
-type Hook = (url: string, config, next: () => void) => void;
+type Hook = (url: string, config) => any;
 
 interface BaseRoute {
   beforeEach?: Hook
