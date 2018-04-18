@@ -15,6 +15,12 @@ describe('api', () => {
       method: 'GET'
     })()).toBeTruthy();
 
+    api({
+      user: {
+        method: 'GET'
+      }
+    })
+
     // const API = api('GET');
 
     // expect(API).toHaveProperty('bind');
