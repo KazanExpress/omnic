@@ -1,2 +1,2 @@
 # omnic
-A declarative API client based on fetch
+Epic declarative API client
