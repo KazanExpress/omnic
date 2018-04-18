@@ -1,12 +1,4 @@
-const methods = ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'CONNECT', 'TRACE', 'PATCH'];
-
-const fromPath = (obj, path, callback) => path.reduce((o, i) => {
-  const result = (o === Object(o) ? o[i] : o);
-  callback && callback(result);
-  return result;
-}, obj);
-const isString = v => !!v.valueOf && typeof v.valueOf() === 'string';
-const isFunction = v => typeof v === 'function';
+import { fromPath, methods, isString, isFunction } from './src/misc'
 
 const transformRoute = (finalAPI, path, route, adapter, config) => {
   const request = customConfig => adapter.request({ ...config, ...customConfig });
@@ -34,8 +26,19 @@ const transformRoute = (finalAPI, path, route, adapter, config) => {
  * @returns { API } instance
  */
 function apiFactory(...stuff) {
+  /**
+   * @type { Adapter }
+   */
   var adapter = null;     // default fetch adapter here
+
+  /**
+   * @type { Interceptor }
+   */
   var interceptor = null; // default interceptor here
+
+  /**
+   * @type { RouteConfig }
+   */
   var config = null;      // default global route config here
 
   if (stuff) {
@@ -44,7 +47,7 @@ function apiFactory(...stuff) {
 
       if (type === 'function') {
         interceptor = element;
-      } else if (type === 'object' && element instanceof Adapter) {
+      } else if (type === 'object' && typeof Adapter !== 'undefined' && element instanceof Adapter) {
         adapter = element;
       } else if (type === 'object') {
         config = element;
@@ -54,9 +57,7 @@ function apiFactory(...stuff) {
     });
   }
 
-  return function (routeTree) {
-    this.with = apiFactory;
-
+  function api(routeTree) {
     let finalAPI = {};
 
     return (function processRoute(route, path = []) {
@@ -77,6 +78,10 @@ function apiFactory(...stuff) {
       return finalRoute;
     }(routeTree));
   };
+
+  api.with = apiFactory;
+
+  return api;
 }
 
 export default apiFactory();

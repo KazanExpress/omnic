@@ -1,20 +1,9 @@
-const a: RequestInit = {
-  body,
-  cache,
-  credentials,
-  mode,
-  redirect,
-  referrerPolicy,
-  signal
-}
-
-type Body = typeof a.body;
-type Cache = typeof a.cache;
-type Credentials = typeof a.credentials;
-type Mode = typeof a.mode;
-type Redirect = typeof a.redirect;
-type ReferrerPolicy = typeof a.referrerPolicy;
-type Signal = typeof a.signal;
+type Cache = RequestCache;
+type Credentials = RequestCredentials;
+type Mode = RequestMode;
+type Redirect = RequestRedirect;
+type ReferrerPolicy = ReferrerPolicy;
+type Signal = AbortSignal;
 
 type Params = { [key: string]: string };
 
@@ -27,39 +16,46 @@ interface BaseRoute {
   afterEach?: Hook
 }
 
-interface Config extends BaseRoute {
-  method?: Method
+interface BaseConfig {
   path?: string
-  params?: Params
-  body?: Body
-  cache?: Cache
-  credentials?: Credentials
-  headers?: HeadersInit
+  body?: any
   integrity?: string
   keepalive?: boolean
-  mode?: Mode
-  redirect?: Redirect
   referrer?: string
+  params?: Params
+  cache?: RequestCache
+  credentials?: RequestCredentials
+  headers?: HeadersInit
+  mode?: RequestMode
+  redirect?: RequestRedirect
   referrerPolicy?: ReferrerPolicy
-  signal?: Signal
+  signal?: AbortSignal
 }
+
+interface Config extends BaseConfig {
+  method?: Method
+}
+
+type LeafConfig = Config & BaseRoute;
+type LeafMethodConfig = BaseConfig & BaseRoute;
+
+type RouteConfig = LeafConfig | Method | Method[] | {
+  [method in Method]?: LeafMethodConfig
+};
 
 interface RouteTree extends BaseRoute {
-  [path: string]: RouteConfig | BaseRoute | ((...params) => BaseRoute)
+  [path: string]: Route | ((...params) => Route)
+  $config: Config
 }
-
-type RouteConfig = Config | Method | Method[] | {
-  [method: Method]: Config
-};
 
 type Route = RouteTree | RouteConfig;
 
 interface Adapter {
-
+  request(customConfig: RequestInit): Promise<any>
 }
 
 type Interceptor = (url: string, response: any) => any;
 
-type API = ((routes: Route | RouteConfig) => any) & { with: apiBuilder };
+type API = ((routes?: Route | RouteConfig) => any) & { with: apiBuilder };
 
-type apiBuilder = (...stuff: Array<RouteConfig | Adapter | Interceptor>) => API;
+type apiBuilder = (...stuff: Array<LeafConfig | Adapter | Interceptor>) => API;
