@@ -62,7 +62,7 @@ export const API = omnic({
         },
         get: id => ({
           method: 'GET',
-          path: 'post' + (id ? `/${id}` : '')
+          path: id
         })
       },
     }),
@@ -84,10 +84,10 @@ API.isUp().then(() => {
 
   API.user(2).get().then(/* Do something with the 2nd user's data */);
 
-  API.user(2).posts.list().then(/* Do something with the 2nd user's posts */);
+  API.user(2).posts().then(/* Do something with the 2nd user's posts */);
 
-  API.user(2).posts.add(/* Add post to user */).then(/* do something after this */);
+  API.user(2).post.add(/* Add post to user */).then(/* do something after this */);
 
-  API.user(2).posts.get(1).then(/* Do something with the 2nd user's first post */);
+  API.user(2).post.get(1).then(/* Do something with the 2nd user's first post */);
 });
 ```
