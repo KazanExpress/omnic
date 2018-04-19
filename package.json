@@ -3,6 +3,8 @@
   "version": "0.0.0",
   "description": "Epic declarative API client",
   "main": "index.js",
+  "module": "index.js",
+  "esnext": "index.js",
   "types": "types",
   "scripts": {
     "test": "jest"

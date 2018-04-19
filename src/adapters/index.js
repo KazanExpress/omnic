@@ -1,6 +1,6 @@
 import { getQueryString } from '../src/misc'
 
-class RequestAdapter {
+export class RequestAdapter {
   processParams (url, config) {
     if (config.params) {
       let query = getQueryString(config.params).strip()
