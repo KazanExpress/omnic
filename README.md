@@ -60,9 +60,9 @@ export const API = omnic({
         add: {
           method: 'POST'
         },
-        get: id => ({
+        get: postid => ({
           method: 'GET',
-          path: id
+          path: postid
         })
       },
     }),
