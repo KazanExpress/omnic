@@ -91,3 +91,38 @@ API.isUp().then(() => {
   API.user(2).post.get(1).then(/* Do something with the 2nd user's first post */);
 });
 ```
+
+
+## Alternative with helpers
+
+
+```js
+// client.js
+export const API = omnic({
+  api: {
+    users: GET({
+      path: 'user/list'
+    }),
+    user: id => ({
+      get: GET({
+        path: id
+      }),
+
+      posts: POST({
+        path: 'post'
+      }),
+
+      post: {
+        add: POST(),
+        get: id => (GET({
+          path: id
+        }))
+      },
+    }),
+
+    isUp: GET({
+      path: ''
+    })
+  }
+});
+```
