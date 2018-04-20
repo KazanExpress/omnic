@@ -39,40 +39,37 @@ Using `omnic`, the client for this API can be written very simply, like this:
 
 ```js
 // client.js
-export const API = omnic({
-  api: {
-    users: {
-      method: 'GET',
+import route from 'omnic'
+const { GET, POST } = route;
+
+export const API = route({
+  api: route({
+    users: GET({
       path: 'user/list'
-    },
-    user: id => ({
-      get: {
-        method: 'GET',
-        path: id
-      },
-
-      posts: {
-        method: 'GET',
-        path: 'post'
-      },
-
-      post: {
-        add: {
-          method: 'POST'
-        },
-        get: postid => ({
-          method: 'GET',
-          path: postid
-        })
-      },
     }),
 
-    isUp: {
-      path: '',
-      method: 'GET'
-    }
-  }
-});
+    user: id => route({
+      get: GET({
+        path: id
+      }),
+
+      posts: GET({
+        path: 'post'
+      }),
+
+      post: route({
+        add: POST(),
+        get: id => GET({
+          path: id
+        })
+      }),
+    }),
+
+    isUp: GET({
+      path: ''
+    })
+  })
+}).api;
 ```
 
 ```js
@@ -81,48 +78,9 @@ import { API } from 'client.js'
 // Continue only if the API is up
 API.isUp().then(() => {
   API.users().then(/* Do something with the list of users here */);
-
   API.user(2).get().then(/* Do something with the 2nd user's data */);
-
   API.user(2).posts().then(/* Do something with the 2nd user's posts */);
-
   API.user(2).post.add({ body: {/* Add post to user */} }).then(/* do something after this */);
-
   API.user(2).post.get(1).then(/* Do something with the 2nd user's first post */);
-});
-```
-
-
-## Alternative with helpers
-
-
-```js
-// client.js
-export const API = omnic({
-  api: {
-    users: GET({
-      path: 'user/list'
-    }),
-    user: id => ({
-      get: GET({
-        path: id
-      }),
-
-      posts: POST({
-        path: 'post'
-      }),
-
-      post: {
-        add: POST(),
-        get: id => (GET({
-          path: id
-        }))
-      },
-    }),
-
-    isUp: GET({
-      path: ''
-    })
-  }
 });
 ```

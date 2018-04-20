@@ -1,25 +1,13 @@
 import { fromPath, methods, isString, isFunction } from './misc'
 import { RequestAdapter as Adapter } from './adapters'
-import { apiWith } from './api'
+import { aliasFactory } from './aliasFactory';
 
 /**
- * @param { Array<RouteConfig | Adapter | Interceptor> } stuff
- * @returns { API } instance
+ * @type { OmnicFactory }
  */
-export function apiFactory(...stuff) {
-  /**
-   * @type { Adapter }
-   */
+export const routeFactory = (...stuff) => {
   var adapter = null;     // default fetch adapter here
-
-  /**
-   * @type { Interceptor }
-   */
   var interceptor = null; // default interceptor here
-
-  /**
-   * @type { RouteConfig }
-   */
   var config = null;      // default global route config here
 
   if (stuff) {
@@ -33,14 +21,19 @@ export function apiFactory(...stuff) {
       } else if (type === 'object') {
         config = element;
       } else {
-        console.error('Warning! Wrong config for API:', element);
+        console.error('Warning! Wrong config for route:', element);
       }
     });
   }
 
-  const api = apiWith(adapter, interceptor, config);
+  function route(subRoutes) {
 
-  api.with = apiFactory;
+    return subRoutes;
+  }
 
-  return api;
+  route.with = routeFactory;
+
+  methods.forEach(method => route[method] = aliasFactory(method, adapter));
+
+  return route;
 }

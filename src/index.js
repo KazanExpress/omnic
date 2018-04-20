@@ -1,5 +1,5 @@
-import { apiFactory } from './apiFactory';
+import { routeFactory, aliasFactory } from './factories';
 
-export default apiFactory();
+export default routeFactory();
 
-export { apiFactory };
+export { routeFactory, aliasFactory };
