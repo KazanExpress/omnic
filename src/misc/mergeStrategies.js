@@ -40,15 +40,20 @@ function configMergeStrategy (parent, child) {
   return finalConfig
 }
 
-export const pipe = baseMerge(parent, child, (parent, child) => Array.isArray(parent) ? parent.concat([child]) : [parent, child])
-export const concat = baseMerge(parent, child, (parent, child) => parent + child)
-export const merge = baseMerge(parent, child, (parent, child) => ({ ...parent, ...child }))
-export const override = baseMerge(parent, child, (parent, child) => child)
+export const pipe = (parent, child) => baseMerge(parent, child, (parent, child) => Array.isArray(parent) ? parent.concat([child]) : [parent, child])
+export const concat = (parent, child) => baseMerge(parent, child, (parent, child) => parent + child)
+export const merge = (parent, child) => baseMerge(parent, child, (parent, child) => ({ ...parent, ...child }))
+export const override = (parent, child) => baseMerge(parent, child, (parent, child) => child)
 
+/**
+ * Merges all the configs accroding to a specific strategy
+ *
+ * mergeConfigs(parentConfig, leafConfig, (optionalConfig || {})) => a single config
+ *
+ * @export
+ * @param { Config[] } configs to merge
+ * @returns { Config } final merged config
+ */
 export function mergeConfigs(...configs) {
   return configs.reduce(configMergeStrategy)
 }
-
-/*
- mergeConfigs(parentConfig, leafConfig, (optionalConfig || {})) => a single config
-*/

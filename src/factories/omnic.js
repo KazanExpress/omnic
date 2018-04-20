@@ -1,6 +1,7 @@
 import { fromPath, methods, isString, isFunction } from './misc'
 import { RequestAdapter as Adapter } from './adapters'
-import { aliasFactory } from './aliasFactory';
+import { aliasFactory, requestMark } from './alias';
+import { aliasMark } from './alias';
 
 /**
  * @type { OmnicFactory }
@@ -27,7 +28,19 @@ export const omnicFactory = (...stuff) => {
   }
 
   function route(subRoutes) {
+    function processNode(node) {
+      if (isFunction(node)) {
+        if (node[aliasMark]) {
+          
+        } else if (node[requestMark]) {
 
+        } else {
+
+        }
+      } else {
+        return node;
+      }
+    }
     return subRoutes;
   }
 

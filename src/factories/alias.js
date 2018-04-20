@@ -1,7 +1,9 @@
 import { RequestAdapter } from '../adapters'
 import { FetchAdapter } from '../adapters/fetch'
+import { mergeConfigs } from '../misc'
 
 export const aliasMark = '__omnic_method__';
+export const requestMark = '__omnic__';
 
 /**
  * Factory function, produces request aliases for different HTTP methods
@@ -9,7 +11,7 @@ export const aliasMark = '__omnic_method__';
  * @export
  * @param { Method } method
  * @param { RequestAdapter } [adapter=FetchAdapter]
- * @returns { { (config): Promise, __omnic_method__: Method } }
+ * @returns { OmnicMethod }
  */
 export function aliasFactory(method, adapter = FetchAdapter) {
   /**
@@ -20,13 +22,14 @@ export function aliasFactory(method, adapter = FetchAdapter) {
   function alias(config) {
     const { path, ...finalConfig } = { ...config, method };
 
-    const internalAlias = (url, parentConfig) =>
-      (optionalConfig) => adapter.request(
+    const internalAlias = (url, parentConfig) => {
+      const finalRequest = (optionalConfig = {}) => adapter.request(
         url + '/' + (path || ''),
-
-        // TODO: Deep merge instead of shallow (for headers)
-        { ...parentConfig, ...finalConfig, ...(optionalConfig || {}) }
+        mergeConfigs(parentConfig, finalConfig, optionalConfig)
       );
+
+      finalRequest[requestMark] = true;
+    }
 
     internalAlias[aliasMark] = method;
 

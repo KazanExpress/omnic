@@ -1,11 +1,20 @@
+import { aliasMark, requestMark } from './src/factories/alias'
+
 type Method = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'OPTIONS' | 'CONNECT' | 'TRACE' | 'PATCH'
 type Hook = (url: string, path: string[], config) => any
-type Alias = (config?) => Promise<any>
+
+type Alias = {
+  (config?): Promise<any>
+  [requestMark]: boolean
+}
+
+type OmnicMethod<T> = {
+  (url: string, config: LeafConfig): Alias
+  [aliasMark]: T
+}
 
 type WithAliases<T> = T & {
-  readonly [method in Method]: Alias & {
-    __omnic_method__: method
-  }
+  readonly [M in Method]: OmnicMethod<M>
 }
 
 interface LeafConfig {
