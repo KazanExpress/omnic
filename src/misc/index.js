@@ -21,3 +21,5 @@ export const getQueryString = (params) => {
     })
     .join('&')
 }
+
+export * from './mergeStrategies'
