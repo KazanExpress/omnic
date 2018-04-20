@@ -1,4 +1,4 @@
-import { mergeConfigs, merge } from '../misc'
+import { mergeConfigs, merge, isFunction } from '../misc'
 import { RequestAdapter as Adapter } from './adapters'
 import { aliasFactory, aliasMark, requestMark } from './alias'
 
@@ -30,7 +30,10 @@ export const omnicFactory = (...stuff) => {
     function processNode(node, key) {
       if (isFunction(node)) {
         if (node[aliasMark]) {
-          return (url, otherConfig) => node(url + '/' + key, mergeConfigs(config, otherConfig))
+          const newNode = (url, otherConfig) => node(url + '/' + key, mergeConfigs(config, otherConfig));
+
+          newNode[aliasMark] = node[aliasMark];
+          return newNode;
         } else if (node[requestMark]) {
           return node;
         } else {
@@ -40,6 +43,13 @@ export const omnicFactory = (...stuff) => {
         return node;
       }
     }
+
+    if (isFunction(subRoutes)) return processNode(subRoutes);
+
+    for (const key in subRoutes) {
+      subRoutes[key] = processNode(subRoutes[key], key);
+    }
+
     return subRoutes;
   }
 
