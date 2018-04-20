@@ -1,5 +1,5 @@
-import { mergeConfigs, merge, isFunction } from '../misc'
-import { RequestAdapter as Adapter } from './adapters'
+import { mergeConfigs, merge, isFunction, methods } from '../misc'
+import { RequestAdapter as Adapter } from '../adapters'
 import { aliasFactory, aliasMark, requestMark } from './alias'
 
 /**
@@ -55,7 +55,7 @@ export const omnicFactory = (...stuff) => {
 
   route.with = omnicFactory;
 
-  methods.forEach(method => route[method] = aliasFactory(method, config, adapter));
+  methods.forEach(method => (route[method] = aliasFactory(method, config, adapter)));
 
   return route;
 }

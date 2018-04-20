@@ -1,5 +1,4 @@
 import { RequestAdapter } from '../adapters'
-import { FetchAdapter } from '../adapters/fetch'
 import { mergeConfigs, prepareFetchConfig } from '../misc'
 
 export const aliasMark = '__omnic_method__';
@@ -10,10 +9,10 @@ export const requestMark = '__omnic__';
  *
  * @export
  * @param { Method } method
- * @param { RequestAdapter } [adapter=FetchAdapter]
+ * @param { RequestAdapter } [adapter=RequestAdapter]
  * @returns { OmnicMethod }
  */
-export function aliasFactory(method, rootConfig, adapter = FetchAdapter) {
+export function aliasFactory(method, rootConfig, adapter = RequestAdapter) {
   /**
    * Final alias function
    *
