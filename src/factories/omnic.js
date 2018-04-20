@@ -50,6 +50,8 @@ export const omnicFactory = (...stuff) => {
       subRoutes[key] = processNode(subRoutes[key], key);
     }
 
+    console.log(subRoutes)
+
     return subRoutes;
   }
 

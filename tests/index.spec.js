@@ -33,7 +33,5 @@ describe('asd', () => {
     })
   }).api;
 
-  console.log(API);
-
   it('asd', () => expect(true).toBe(true))
 })
