@@ -22,4 +22,16 @@ export const getQueryString = (params) => {
     .join('&')
 }
 
+/**
+ * Returns a valid fetch config from the omnic's LeafConfig
+ *
+ * @export
+ * @param { LeafConfig } config
+ * @returns { RequestInit }
+ */
+export function prepareFetchConfig(config) {
+  const { beforeEach, afterEach, path, params, ...fetchConfig } = config;
+  return fetchConfig;
+}
+
 export * from './mergeStrategies'

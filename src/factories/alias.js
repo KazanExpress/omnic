@@ -1,6 +1,6 @@
 import { RequestAdapter } from '../adapters'
 import { FetchAdapter } from '../adapters/fetch'
-import { mergeConfigs } from '../misc'
+import { mergeConfigs, prepareFetchConfig } from '../misc'
 
 export const aliasMark = '__omnic_method__';
 export const requestMark = '__omnic__';
@@ -13,7 +13,7 @@ export const requestMark = '__omnic__';
  * @param { RequestAdapter } [adapter=FetchAdapter]
  * @returns { OmnicMethod }
  */
-export function aliasFactory(method, adapter = FetchAdapter) {
+export function aliasFactory(method, rootConfig, adapter = FetchAdapter) {
   /**
    * Final alias function
    *
@@ -25,7 +25,7 @@ export function aliasFactory(method, adapter = FetchAdapter) {
     const internalAlias = (url, parentConfig) => {
       const finalRequest = (optionalConfig = {}) => adapter.request(
         url + '/' + (path || ''),
-        mergeConfigs(parentConfig, finalConfig, optionalConfig)
+        prepareFetchConfig(mergeConfigs(rootConfig, parentConfig, finalConfig, optionalConfig))
       );
 
       finalRequest[requestMark] = true;
