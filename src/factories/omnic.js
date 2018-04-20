@@ -5,7 +5,7 @@ import { aliasFactory } from './aliasFactory';
 /**
  * @type { OmnicFactory }
  */
-export const routeFactory = (...stuff) => {
+export const omnicFactory = (...stuff) => {
   var adapter = null;     // default fetch adapter here
   var interceptor = null; // default interceptor here
   var config = null;      // default global route config here
@@ -31,7 +31,7 @@ export const routeFactory = (...stuff) => {
     return subRoutes;
   }
 
-  route.with = routeFactory;
+  route.with = omnicFactory;
 
   methods.forEach(method => route[method] = aliasFactory(method, adapter));
 

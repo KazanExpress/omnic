@@ -29,11 +29,9 @@ interface Config extends LeafConfig {
   method?: Method
 }
 
-
 interface OmnicFactory {
   (...stuff): Omnic
 }
-
 
 type Omnic = WithAliases<{
   <T>(routes: T): T

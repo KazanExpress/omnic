@@ -1,5 +1,5 @@
-import { routeFactory, aliasFactory } from './factories';
+import { omnicFactory, aliasFactory } from './factories';
 
-export default routeFactory();
+export default omnicFactory();
 
-export { routeFactory, aliasFactory };
+export { omnicFactory, aliasFactory };

@@ -1,4 +1,4 @@
 import { aliasFactory } from './alias'
-import { routeFactory } from './route'
+import { omnicFactory } from './omnic'
 
-export { aliasFactory, routeFactory }
+export { aliasFactory, omnicFactory }

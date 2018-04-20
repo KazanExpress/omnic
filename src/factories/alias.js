@@ -12,12 +12,26 @@ export const aliasMark = '__omnic_method__';
  * @returns { { (config): Promise, __omnic_method__: Method } }
  */
 export function aliasFactory(method, adapter = FetchAdapter) {
+  /**
+   * Final alias function
+   *
+   * @param { LeafConfig } config
+   */
   function alias(config) {
-    const { path, finalConfig } = { ...config, method };
-    return adapter.request(path, finalConfig);
-  }
+    const { path, ...finalConfig } = { ...config, method };
 
-  alias[aliasMark] = method;
+    const internalAlias = (url, parentConfig) =>
+      (optionalConfig) => adapter.request(
+        url + '/' + (path || ''),
+
+        // TODO: Deep merge instead of shallow (for headers)
+        { ...parentConfig, ...finalConfig, ...(optionalConfig || {}) }
+      );
+
+    internalAlias[aliasMark] = method;
+
+    return internalAlias;
+  }
 
   return alias;
 }

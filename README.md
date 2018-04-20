@@ -48,9 +48,9 @@ export const API = route({
       path: 'user/list'
     }),
 
-    user: id => route({
+    user: userId => route({
       get: GET({
-        path: id
+        path: userId
       }),
 
       posts: GET({
@@ -59,8 +59,8 @@ export const API = route({
 
       post: route({
         add: POST(),
-        get: id => GET({
-          path: id
+        get: postId => GET({
+          path: postId
         })
       }),
     }),
