@@ -1,7 +1,6 @@
-import { fromPath, methods, isString, isFunction } from './misc'
+import { mergeConfigs, merge } from '../misc'
 import { RequestAdapter as Adapter } from './adapters'
-import { aliasFactory, requestMark } from './alias';
-import { aliasMark } from './alias';
+import { aliasFactory, aliasMark, requestMark } from './alias'
 
 /**
  * @type { OmnicFactory }
@@ -28,14 +27,14 @@ export const omnicFactory = (...stuff) => {
   }
 
   function route(subRoutes) {
-    function processNode(node) {
+    function processNode(node, key) {
       if (isFunction(node)) {
         if (node[aliasMark]) {
-          
+          return (url, otherConfig) => node(url + '/' + key, mergeConfigs(config, otherConfig))
         } else if (node[requestMark]) {
-
+          return node;
         } else {
-
+          return param => route.with(config)(node(param))
         }
       } else {
         return node;
@@ -46,7 +45,7 @@ export const omnicFactory = (...stuff) => {
 
   route.with = omnicFactory;
 
-  methods.forEach(method => route[method] = aliasFactory(method, adapter));
+  methods.forEach(method => route[method] = aliasFactory(method, config, adapter));
 
   return route;
 }
