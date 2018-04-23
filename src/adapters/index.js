@@ -1,7 +1,7 @@
 import { getQueryString } from '../misc'
 import 'whatwg-fetch'
 
-export class RequestAdapter {
+export class BaseAdapter {
   request (url, config) {
     [url, config] = this.processParams(url, config)
     console.log(url)

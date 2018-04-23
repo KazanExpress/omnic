@@ -10,10 +10,21 @@ function baseMerge (parent, child, strategy) {
   }
 }
 
-function configMergeStrategy (parent, child) {
+export const pipe = (parent, child) => baseMerge(parent, child, (parent, child) => function () { parent(arguments); child(arguments); })
+
+export const reversePipe = (parent, child) => pipe(child, parent)
+
+export const concat = (parent, child) => baseMerge(parent, child, (parent, child) => parent + child)
+
+//TODO account for Headers class and string[][]
+export const merge = (parent, child) => baseMerge(parent, child, (parent, child) => ({ ...parent, ...child }))
+
+export const override = (parent, child) => baseMerge(parent, child, (parent, child) => child)
+
+export const config = (parent, child) => baseMerge(parent, child, (parent, child) => {
   const configMergeStrategies = {
     beforeEach: pipe,
-    afterEach: pipe,
+    afterEach: reversePipe,
     path: concat,
     headers: merge,
     body: override,
@@ -38,22 +49,17 @@ function configMergeStrategy (parent, child) {
   }
 
   return finalConfig
-}
-
-export const pipe = (parent, child) => baseMerge(parent, child, (parent, child) => Array.isArray(parent) ? parent.concat([child]) : [parent, child])
-export const concat = (parent, child) => baseMerge(parent, child, (parent, child) => parent + child)
-export const merge = (parent, child) => baseMerge(parent, child, (parent, child) => ({ ...parent, ...child }))
-export const override = (parent, child) => baseMerge(parent, child, (parent, child) => child)
+})
 
 /**
  * Merges all the configs accroding to a specific strategy
  *
- * mergeConfigs(parentConfig, leafConfig, (optionalConfig || {})) => a single config
+ * mergeConfigs(parentConfig, OmnicConfig, (optionalConfig || {})) => a single config
  *
  * @export
  * @param { Config[] } configs to merge
  * @returns { Config } final merged config
  */
 export function mergeConfigs(...configs) {
-  return configs.reduce(configMergeStrategy)
+  return configs.reduce(config)
 }

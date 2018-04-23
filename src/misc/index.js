@@ -23,10 +23,10 @@ export const getQueryString = (params) => {
 }
 
 /**
- * Returns a valid fetch config from the omnic's LeafConfig
+ * Returns a valid fetch config from the omnic's OmnicConfig
  *
  * @export
- * @param { LeafConfig } config
+ * @param { OmnicConfig } config
  * @returns { RequestInit }
  */
 export function prepareFetchConfig(config) {

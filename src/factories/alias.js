@@ -1,5 +1,4 @@
-import { RequestAdapter } from '../adapters'
-import { mergeConfigs, prepareFetchConfig } from '../misc'
+import { mergeConfigs, prepareFetchConfig, isString } from '../misc'
 
 export const aliasMark = '__omnic_method__';
 export const requestMark = '__omnic__';
@@ -8,22 +7,27 @@ export const requestMark = '__omnic__';
  * Factory function, produces request aliases for different HTTP methods
  *
  * @export
- * @param { Method } method
- * @param { RequestAdapter } [adapter=RequestAdapter]
- * @returns { OmnicMethod }
+ * @param { OmnicMethods } method
+ * @param { OmnicAdapter } adapter
+ * @returns { OmnicMethods }
  */
-export function aliasFactory(method, adapter = new RequestAdapter()) {
+export function aliasFactory(method, adapter) {
+
   /**
    * Final alias function
    *
-   * @param { LeafConfig } config
+   * @param { OmnicConfig } config
    */
   function alias(config) {
+    if (isString(config))
+      config = { path: config };
+
     const finalConfig = { ...config, method };
 
     const internalAlias = (url, parentConfig) => {
       const finalRequest = (optionalConfig = {}) => {
-        const _config = mergeConfigs(parentConfig, finalConfig, optionalConfig);
+                                    // Override final route config if the optional config is provided
+        const _config = mergeConfigs(parentConfig, optionalConfig || finalConfig);
 
         return adapter.request(
           _config.path + (url || ''),
@@ -31,7 +35,7 @@ export function aliasFactory(method, adapter = new RequestAdapter()) {
         );
       }
 
-      // finalRequest[requestMark] = true;
+      finalRequest[requestMark] = true;
 
       return finalRequest;
     }
