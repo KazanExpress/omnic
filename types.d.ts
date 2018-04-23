@@ -42,5 +42,5 @@ interface OmnicFactory {
 
 type Omnic = WithAliases<{
   <T>(routes: T): T
-  readonly with: OmnicFactory
+  readonly with: (...stuff) => Omnic
 }>

@@ -1,8 +1,10 @@
 import { getQueryString } from '../misc'
+import 'whatwg-fetch'
 
 export class RequestAdapter {
   request (url, config) {
     [url, config] = this.processParams(url, config)
+    console.log(url)
     return fetch(url, config)
   }
 

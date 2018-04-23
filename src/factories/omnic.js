@@ -6,7 +6,7 @@ import { aliasFactory, aliasMark, requestMark } from './alias'
  * @type { OmnicFactory }
  */
 export const omnicFactory = (...stuff) => {
-  var adapter = null;     // default fetch adapter here
+  var adapter = new Adapter();     // default fetch adapter here
   var interceptor = null; // default interceptor here
   var config = null;      // default global route config here
 
@@ -28,36 +28,38 @@ export const omnicFactory = (...stuff) => {
 
   function route(subRoutes) {
     function processNode(node, key) {
-      if (isFunction(node)) {
-        if (node[aliasMark]) {
-          const newNode = (url, otherConfig) => node(url + '/' + key, mergeConfigs(config, otherConfig));
-
-          newNode[aliasMark] = node[aliasMark];
-          return newNode;
-        } else if (node[requestMark]) {
-          return node;
-        } else {
-          return param => route.with(config)(node(param))
-        }
-      } else {
+      if (!isFunction(node) || node[requestMark]) {
         return node;
       }
+
+      if (node[aliasMark]) {
+        return node(key, config);
+      }
+
+      return param => {
+        const result = node(param);
+
+        if (!isFunction(result)) {
+          return result;
+        }
+
+        return result(key, config)();
+      };
     }
 
-    if (isFunction(subRoutes)) return processNode(subRoutes);
+    if (isFunction(subRoutes))
+      return processNode(subRoutes);
 
     for (const key in subRoutes) {
       subRoutes[key] = processNode(subRoutes[key], key);
     }
-
-    console.log(subRoutes)
 
     return subRoutes;
   }
 
   route.with = omnicFactory;
 
-  methods.forEach(method => (route[method] = aliasFactory(method, config, adapter)));
+  methods.forEach(method => (route[method] = aliasFactory(method, adapter)));
 
   return route;
 }

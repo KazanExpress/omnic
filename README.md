@@ -42,7 +42,13 @@ Using `omnic`, the client for this API can be written very simply, like this:
 import route from 'omnic'
 const { GET, POST } = route;
 
-export const API = route({
+export const API = route.with({
+  path: 'https://someserver.com/',
+  headers: {
+    'Accept': 'text/plain',
+    'Content-Type': 'application/json'
+  }
+})({
   api: route({
     users: GET({
       path: 'user/list'

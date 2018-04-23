@@ -12,22 +12,28 @@ export const requestMark = '__omnic__';
  * @param { RequestAdapter } [adapter=RequestAdapter]
  * @returns { OmnicMethod }
  */
-export function aliasFactory(method, rootConfig, adapter = RequestAdapter) {
+export function aliasFactory(method, adapter = new RequestAdapter()) {
   /**
    * Final alias function
    *
    * @param { LeafConfig } config
    */
   function alias(config) {
-    const { path, ...finalConfig } = { ...config, method };
+    const finalConfig = { ...config, method };
 
     const internalAlias = (url, parentConfig) => {
-      const finalRequest = (optionalConfig = {}) => adapter.request(
-        url + '/' + (path || ''),
-        prepareFetchConfig(mergeConfigs(rootConfig, parentConfig, finalConfig, optionalConfig))
-      );
+      const finalRequest = (optionalConfig = {}) => {
+        const _config = mergeConfigs(parentConfig, finalConfig, optionalConfig);
 
-      finalRequest[requestMark] = true;
+        return adapter.request(
+          _config.path + (url || ''),
+          prepareFetchConfig(_config)
+        );
+      }
+
+      // finalRequest[requestMark] = true;
+
+      return finalRequest;
     }
 
     internalAlias[aliasMark] = method;

@@ -5,33 +5,20 @@ const { GET, POST } = route;
 
 describe('asd', () => {
   const API = route({
-    api: route({
-      users: GET({
-        path: 'user/list'
-      }),
+    users: GET(),
+    posts: route({
+      list: GET({ path: '' }),
 
-      user: userId => route({
-        get: GET({
-          path: userId
-        }),
+      get: postId => ({ path: postId }),
+      comments: postId => ({ path: postId + '/comments' })
+    }),
 
-        posts: GET({
-          path: 'post'
-        }),
 
-        post: route({
-          add: POST(),
-          get: postId => GET({
-            path: postId
-          })
-        }),
-      }),
+  });
 
-      isUp: GET({
-        path: ''
-      })
-    })
-  }).api;
+  it('asd', async () => {
 
-  it('asd', () => expect(true).toBe(true))
+    console.log(await (await API.users()).json());
+    expect(true).toBe(true)
+  })
 })
