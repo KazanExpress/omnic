@@ -3,14 +3,16 @@
 import route from '../index'
 const { GET, POST } = route;
 
+console.log(route.GET)
+
 describe('asd', () => {
   const API = route({
     users: GET(),
     posts: route({
-      list: GET({ path: '' }),
+      list: GET(''),
 
-      get: postId => ({ path: postId }),
-      comments: postId => ({ path: postId + '/comments' })
+      get: postId => (postId),
+      comments: postId => (postId + '/comments')
     }),
 
 

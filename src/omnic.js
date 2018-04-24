@@ -1,6 +1,6 @@
 import { BaseAdapter as Adapter } from '../adapters'
 import { mergeConfigs, merge, isFunction, methods } from '../misc'
-import { aliasFactory, aliasMark, requestMark } from './alias'
+import { aliasFactory, aliasMark, routeMark, requestMark } from './alias'
 
 export class Omnic {
   constructor(adapter, interceptor, config) {
@@ -11,18 +11,12 @@ export class Omnic {
     methods.forEach(method => (this.buildRoute[method] = aliasFactory(method, adapter)));
   }
 
-  /**
-   * @param { OmnicMethod | Alias } node
-   * @param { string } key
-   * @returns
-   * @memberof Omnic
-   */
   processNode(node, key) {
     if (!isFunction(node) || node[requestMark]) {
       return node;
     }
 
-    if (node[aliasMark]) {
+    if (node[aliasMark] || node[routeMark]) {
       return node(key, this.config);
     }
 
@@ -37,28 +31,38 @@ export class Omnic {
     };
   }
 
-  /**
-   * @type { OmnicRouteBuilder }
-   *
-   * @param { any } subRoutes
-   * @returns api routes
-   * @memberof Omnic
-   */
   buildRoute(routes) {
-    if (isFunction(routes))
-      return this.processNode(routes);
+    const routeRegex = /(?:\w*:)?\/\/.*/gi;
 
-    for (const key in routes) {
-      routes[key] = this.processNode(routes[key], key);
+    const routeBuilder = (url, config) => {
+      if (!config) {
+        config = {}
+      }
+
+      if (!config.path) {
+        config.path = url
+      }
+
+      config = mergeConfigs(config, this.config);
+
+      if (isFunction(routes))
+        return this.processNode(routes, config.path);
+
+      for (const key in routes) {
+        routes[key] = this.processNode(routes[key], key);
+      }
+
+      return routes;
     }
 
-    return routes;
+    if (this.config && routeRegex.test(this.config.path))
+      return routeBuilder(routes, this.config);
+
+    routeBuilder[routeMark] = true;
+    return routeBuilder;
   }
 }
 
-/**
- * @type { OmnicFactory }
- */
 export var omnicFactory = (...stuff) => {
   var adapter = new Adapter();     // default fetch adapter here
   var interceptor = null;         // default interceptor here
@@ -80,5 +84,7 @@ export var omnicFactory = (...stuff) => {
     });
   }
 
-  return new Omnic(adapter, interceptor, config).buildRoute;
+  const omnic = new Omnic(adapter, interceptor, config);
+
+  return omnic.buildRoute.bind(omnic);
 }

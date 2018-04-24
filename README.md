@@ -59,9 +59,8 @@ export const API = generateClient({
     get: GET(userId),
     posts: GET('post'),
     post: route({
-      // The second pair of braces is needed to send the resulting request
-      add: post => route(POST({ body: post }))(),
-      get: postId => route(GET(postId))()
+      add: post => POST({ body: post }),
+      get: postId => GET(postId)
     }),
   }),
 
@@ -77,6 +76,8 @@ API.isUp().then(() => {
   API.users().then(/* Do something with the list of users here */);
   API.user(2).get().then(/* Do something with the 2nd user's data */);
   API.user(2).posts().then(/* Do something with the 2nd user's posts */);
+
+  // The second pair of braces is needed to send the resulting request
   API.user(2).post.add({ /* Add post to user */ })().then(/* do something after this */);
   API.user(2).post.get(1)().then(/* Do something with the 2nd user's first post */);
 });

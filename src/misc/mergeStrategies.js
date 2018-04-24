@@ -1,23 +1,27 @@
-function baseMerge (parent, child, strategy) {
+export const keysOf = Object.getOwnPropertyNames;
+
+export function baseMerge (parent, child, strategy) {
   if (parent && child) {
     return strategy(parent, child)
-  } else if (!parent) {
+  } else if (!parent && child) {
     return child
-  } else if (!child) {
+  } else if (!child && parent) {
     return parent
   } else {
     return undefined
   }
 }
 
-export const pipe = (parent, child) => baseMerge(parent, child, (parent, child) => function () { parent(arguments); child(arguments); })
+export const pipe = (parent, child) => baseMerge(parent, child, (parent, child) => function () { parent(...arguments); child(...arguments); })
 
 export const reversePipe = (parent, child) => pipe(child, parent)
 
-export const concat = (parent, child) => baseMerge(parent, child, (parent, child) => parent + child)
+export const concat = (parent, child) => baseMerge(parent, child, (parent, child) => parent + '/' + child)
 
-//TODO account for Headers class and string[][]
-export const merge = (parent, child) => baseMerge(parent, child, (parent, child) => ({ ...parent, ...child }))
+export const merge = (parent, child) => baseMerge(parent, child, (parent, child) => {
+  //TODO? maybe account for Headers class and string[][]
+  return ({ ...parent, ...child })
+})
 
 export const override = (parent, child) => baseMerge(parent, child, (parent, child) => child)
 
@@ -39,9 +43,10 @@ export const config = (parent, child) => baseMerge(parent, child, (parent, child
     referrerPolicy: override
   }
 
+  const keys = keysOf(parent).concat(keysOf(child))
   const finalConfig = {}
 
-  for (const key in parent) {
+  for (const key of keys) {
     const parentProp = parent[key]
     const childProp = child[key]
 
@@ -57,8 +62,8 @@ export const config = (parent, child) => baseMerge(parent, child, (parent, child
  * mergeConfigs(parentConfig, OmnicConfig, (optionalConfig || {})) => a single config
  *
  * @export
- * @param { Config[] } configs to merge
- * @returns { Config } final merged config
+ * @param { OmnicConfig[] } configs to merge
+ * @returns { OmnicConfig } final merged config
  */
 export function mergeConfigs(...configs) {
   return configs.reduce(config)

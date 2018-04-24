@@ -1,19 +1,5 @@
 type OmnicMethods = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS' | 'CONNECT' | 'TRACE'
-type OmnicHook = (url: string, path: string[], config) => any
-
-type OmnicAlias = {
-  <T = any>(config?: OmnicConfig): (config?: OmnicConfig) => Promise<T>
-  ['__omnic__']: true
-}
-
-type OmnicMethod<T = OmnicMethods> = {
-  (url: string, config: OmnicConfig): OmnicAlias
-  ['__omnic_method__']: T
-}
-
-type WithAliases<T> = T & {
-  readonly [M in OmnicMethods]: OmnicAlias
-}
+type OmnicHook = (url: string, config) => any
 
 interface OmnicConfig {
   beforeEach?: OmnicHook
@@ -32,9 +18,6 @@ interface OmnicConfig {
   referrerPolicy?: ReferrerPolicy
 }
 
-type OmnicFactory = (...stuff) => OmnicRouteBuilder
-
-type OmnicRouteBuilder = WithAliases<{
-  <T>(routes: T): T
-  readonly with: OmnicFactory
-}>
+interface RouteConfig extends OmnicConfig {
+  method: string
+}

@@ -1,24 +1,25 @@
 export const methods = ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'CONNECT', 'TRACE', 'PATCH'];
 
-export const isString = v => !!v.valueOf && typeof v.valueOf() === 'string';
+export const isString = v => !!v && (typeof v === 'string' || (isFunction(v.valueOf) && typeof v.valueOf() === 'string'));
+export const isObject = v => Object.prototype.toString.apply(v) === '[object Object]';
 export const isFunction = v => typeof v === 'function';
-
-export const fromPath = (obj, path) => path.reduce((o, i) => (o === Object(o) ? o[i] : o), obj);
+export const isConfig = v => isObject(v) && isString(v.method) && methods.some(m => m === v.method)
 
 export const getQueryString = (params) => {
-  const toUri = (val) => val !== undefined ? `${encodeURIComponent(k)}[]=${encodeURIComponent(val)}` : '';
+  const toUri = k => val => val !== undefined ? `${encodeURIComponent(k)}=${encodeURIComponent(val)}` : '';
 
   return Object.keys(params)
-    .filter(k => k)
-    .map((k) => {
+    .map(k => {
       if (Array.isArray(params[k])) {
         return params[k]
-          .map(toUri)
+          .map(toUri(k))
+          .filter(p => p)
           .join('&')
       }
 
-      return toUri(params[k])
+      return toUri(k)(params[k])
     })
+    .filter(k => k)
     .join('&')
 }
 
@@ -30,7 +31,20 @@ export const getQueryString = (params) => {
  * @returns { RequestInit }
  */
 export function prepareFetchConfig(config) {
-  const { beforeEach, afterEach, path, params, ...fetchConfig } = config;
+  /**
+   * @type { (keyof RequestInit)[] }
+   */
+  const validKeys = ['body', 'integrity', 'keepalive', 'referrer', 'cache', 'credentials', 'headers', 'mode', 'redirect', 'referrerPolicy', 'method'];
+
+  /**
+   * @type { RequestInit }
+   */
+  const fetchConfig = {};
+
+  for (const key of validKeys) {
+    fetchConfig[key] = config[key];
+  }
+
   return fetchConfig;
 }
 

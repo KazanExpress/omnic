@@ -7,7 +7,7 @@ const { GET, POST } = route;
 const API = route({
   users: GET<User[]>(),
 
-  user: id => route(GET<User>({ path: 'user/' + id }))()
+  user: id => route(GET<User>('user/' + id))()
 })
 
 interface User {
