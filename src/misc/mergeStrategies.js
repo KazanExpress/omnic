@@ -1,3 +1,5 @@
+import { urlRegex } from '.'
+
 export const keysOf = Object.getOwnPropertyNames;
 
 export function baseMerge (parent, child, strategy) {
@@ -16,7 +18,14 @@ export const pipe = (parent, child) => baseMerge(parent, child, (parent, child) 
 
 export const reversePipe = (parent, child) => pipe(child, parent)
 
-export const concat = (parent, child) => baseMerge(parent, child, (parent, child) => parent + '/' + child)
+export const concat = (parent, child) => baseMerge(parent, child, (parent, child) => {
+  const processPath = path => path.match(/\/?[\w\d\.\:\@]+/g).join('')
+  const parentUris = parent.split('//')
+  if (parentUris.length > 1)
+    return parentUris[0] + '//' + processPath(parentUris[1] + '/' + child)
+  else
+    return processPath(parent + '/' + child)
+})
 
 export const merge = (parent, child) => baseMerge(parent, child, (parent, child) => {
   //TODO? maybe account for Headers class and string[][]

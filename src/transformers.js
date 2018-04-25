@@ -1,22 +1,25 @@
-import { isFunction, isObject, isConfig, mergeConfigs, methods, prepareFetchConfig } from './misc'
+import { isFunction, isString, isObject, isConfig, mergeConfigs, methods, prepareFetchConfig, urlRegex } from './misc'
 import { requestMark, routeMark } from './consts'
 
-function makeRoute(routeBase) {
-  // Checks for "https://", "asdasd://", "//asdasd", "/asdasd" and etc
-  const urlRegex = /(?:\w*:\/)?\/.*/gm
+export function makeRoute(routeBase) {
+  const makeRouteFromParent = (parentConfig, key) => {
+    console.log(this.config.path, key)
+    if (key && !isString(this.config.path)) this.config.path = key
 
-  const makeRouteFromParent = parentConfig => {
-    let config = mergeConfigs(parentConfig, this.config)
+    if (isString(parentConfig)) parentConfig = { path: parentConfig }
 
     if (isFunction(routeBase)) {
-      return processRouteFunction(routeBase, config)
+      return processRouteFunction(routeBase, mergeConfigs(parentConfig, this.config))
     }
 
     if (isObject(routeBase)) {
       if(!isConfig(routeBase)) {
-        return processRouteTree(routeBase, config)
+        return processRouteTree(routeBase, mergeConfigs(parentConfig, this.config))
       } else {
+        let config = mergeConfigs(parentConfig, this.config)
         const requestFunction = requestConfig => {
+          if (isString(requestConfig)) requestConfig = { path: requestConfig }
+
           if (requestConfig) {
             config = mergeConfigs(parentConfig, requestConfig)
           }
@@ -48,10 +51,12 @@ function makeRoute(routeBase) {
   }
 }
 
-function processRouteFunction(routeFunction, config) {
+function processRouteFunction(routeFunction, config, key) {
+  if (isString(config)) config = { path: config }
+
   if (!routeFunction[requestMark]) {
     if (routeFunction[routeMark]) {
-      return routeFunction(config)
+      return routeFunction(config, key)
     } else {
       return function () { return routeFunction.apply(null, arguments)(config) }
     }
@@ -63,11 +68,7 @@ function processRouteFunction(routeFunction, config) {
 function processRouteTree(tree, config) {
   const finalAPI = {}
   for (const key in tree) if (isFunction(tree[key])) {
-    if (!config.path) {
-      tempConfig.path = key
-    }
-    finalAPI[key] = tree[key](config)
+    finalAPI[key] = processRouteFunction(tree[key], config, key)
   }
-
   return finalAPI
 }

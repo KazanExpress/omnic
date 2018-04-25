@@ -56,7 +56,11 @@ export const API = generateClient({
     get: GET(userId),
     posts: GET('post'),
     post: route({
-      add: post => POST({ body: post, path: '' }),
+      add: (post, followRedirect) => POST({
+        body: post,
+        redirect: followRedirect ? 'follow' : 'no-follow',
+        path: ''
+      }),
       get: postId => GET(postId)
     }),
   }),

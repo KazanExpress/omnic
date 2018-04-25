@@ -1,4 +1,4 @@
-import { getQueryString } from '../misc'
+import { getQueryString } from './misc'
 
 // TODO: remove for production
 import 'whatwg-fetch'

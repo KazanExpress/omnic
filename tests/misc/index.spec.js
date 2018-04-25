@@ -105,6 +105,7 @@ describe('isConfig', () => {
 describe('isString', () => {
   it('functions correctly', () => {
     expect(isString('string')).toBe(true)
+    expect(isString('')).toBe(true)
     expect(isString(new String('string'))).toBe(true)
 
     expect(isString({ })).toBe(false)

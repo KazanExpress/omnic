@@ -1,6 +1,7 @@
 export const methods = ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'CONNECT', 'TRACE', 'PATCH'];
+export const urlRegex = /(?:\w*:\/)?\/.*/gm;
 
-export const isString = v => !!v && (typeof v === 'string' || (isFunction(v.valueOf) && typeof v.valueOf() === 'string'));
+export const isString = v => typeof v === 'string' || (!!v && isFunction(v.valueOf) && typeof v.valueOf() === 'string');
 export const isObject = v => Object.prototype.toString.apply(v) === '[object Object]';
 export const isFunction = v => typeof v === 'function';
 export const isConfig = v => isObject(v) && isString(v.method) && methods.some(m => m === v.method)
