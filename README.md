@@ -9,7 +9,7 @@
 - Make adapters for your own clients (XmlHttpRequest, other frameworks and etc.)
 - Declarative and simple API description
 - Promise support
-- Transform request and response data and configs
+- Transform request and response data and configs in hooks
 - Intercept responses
 - Cancel requests
 - Automatically transforms request data to JSON
@@ -39,11 +39,8 @@ Using `omnic`, the client for this API can be written very simply, like this:
 
 ```js
 // client.js
-// Importing the route constructor
-import route from 'omnic';
-
-// Extracting specific request method constructors
-const { GET, POST } = route;
+// Importing the route constructor and specific request method constructors
+import route, { GET, POST } from 'omnic';
 
 // Creating a client factory with pre-set configuration
 const generateClient = route.with({
@@ -59,7 +56,7 @@ export const API = generateClient({
     get: GET(userId),
     posts: GET('post'),
     post: route({
-      add: post => POST({ body: post }),
+      add: post => POST({ body: post, path: '' }),
       get: postId => GET(postId)
     }),
   }),
