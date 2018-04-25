@@ -3,9 +3,6 @@ import { requestMark, routeMark } from './consts'
 
 export function makeRoute(routeBase) {
   const makeRouteFromParent = (parentConfig, key) => {
-    console.log(this.config.path, key)
-    if (key && !isString(this.config.path)) this.config.path = key
-
     if (isString(parentConfig)) parentConfig = { path: parentConfig }
 
     if (isFunction(routeBase)) {
@@ -16,7 +13,8 @@ export function makeRoute(routeBase) {
       if(!isConfig(routeBase)) {
         return processRouteTree(routeBase, mergeConfigs(parentConfig, this.config))
       } else {
-        let config = mergeConfigs(parentConfig, this.config)
+        if (key && !isString(routeBase.path)) routeBase.path = key
+        let config = mergeConfigs(parentConfig, routeBase || this.config)
         const requestFunction = requestConfig => {
           if (isString(requestConfig)) requestConfig = { path: requestConfig }
 
@@ -26,6 +24,7 @@ export function makeRoute(routeBase) {
 
           const { path, ...configToPrepare } = config
 
+          console.log(path)
           // TODO: call hooks here
 
           return this.adapter.request(path, prepareFetchConfig(configToPrepare))

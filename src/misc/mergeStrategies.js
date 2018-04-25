@@ -52,7 +52,7 @@ export const config = (parent, child) => baseMerge(parent, child, (parent, child
     referrerPolicy: override
   }
 
-  const keys = keysOf(parent).concat(keysOf(child))
+  const keys = keysOf(configMergeStrategies)
   const finalConfig = {}
 
   for (const key of keys) {
