@@ -1,8 +1,5 @@
 import { getQueryString } from './misc'
 
-// TODO: remove for production
-import 'whatwg-fetch'
-
 export class BaseAdapter {
   request (url, config) {
     [url, config] = this.processParams(url, config)

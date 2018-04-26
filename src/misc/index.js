@@ -4,7 +4,10 @@ export const urlRegex = /(?:\w*:\/)?\/.*/gm;
 export const isString = v => typeof v === 'string' || (!!v && isFunction(v.valueOf) && typeof v.valueOf() === 'string');
 export const isObject = v => Object.prototype.toString.apply(v) === '[object Object]';
 export const isFunction = v => typeof v === 'function';
-export const isConfig = v => isObject(v) && isString(v.method) && methods.some(m => m === v.method)
+export const isRequestConfig = v => isObject(v) && isString(v.method) && methods.some(m => m === v.method)
+export const routeConfigIsPath = v => isString(v) || (!!v && !isObject(v))
+
+export const isValidPath = p => isString(p) || typeof p === 'number' || typeof p === 'boolean'
 
 export const getQueryString = (params) => {
   const toUri = k => val => val !== undefined ? `${encodeURIComponent(k)}=${encodeURIComponent(val)}` : '';

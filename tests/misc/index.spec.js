@@ -1,9 +1,10 @@
 import {
   getQueryString,
-  isConfig,
+  isRequestConfig,
   isFunction,
   isObject,
   isString,
+  isValidPath,
   methods,
   prepareFetchConfig
 } from '../../src/misc'
@@ -72,33 +73,33 @@ describe('prepareFetchConfig', () => {
   })
 })
 
-describe('isConfig', () => {
+describe('isRequestConfig', () => {
   it('functions correctly', () => {
-    expect(isConfig({
+    expect(isRequestConfig({
       method: 'GET'
     })).toBe(true)
 
-    expect(isConfig({
+    expect(isRequestConfig({
       method: 'GET',
       path: 'asdasd'
     })).toBe(true)
 
-    expect(isConfig({
+    expect(isRequestConfig({
       method: 'SomeMethod'
     })).toBe(false)
 
-    expect(isConfig({
+    expect(isRequestConfig({
       methods: 'GET'
     })).toBe(false)
 
-    expect(isConfig('string')).toBe(false)
-    expect(isConfig(new String('string'))).toBe(false)
-    expect(isConfig({ })).toBe(false)
-    expect(isConfig(2)).toBe(false)
-    expect(isConfig(true)).toBe(false)
-    expect(isConfig(function () {})).toBe(false)
-    expect(isConfig(() => {})).toBe(false)
-    expect(isConfig(['a', 'b', 'c'])).toBe(false)
+    expect(isRequestConfig('string')).toBe(false)
+    expect(isRequestConfig(new String('string'))).toBe(false)
+    expect(isRequestConfig({ })).toBe(false)
+    expect(isRequestConfig(2)).toBe(false)
+    expect(isRequestConfig(true)).toBe(false)
+    expect(isRequestConfig(function () {})).toBe(false)
+    expect(isRequestConfig(() => {})).toBe(false)
+    expect(isRequestConfig(['a', 'b', 'c'])).toBe(false)
   })
 })
 
@@ -142,6 +143,20 @@ describe('isObject', () => {
     expect(isObject(2)).toBe(false)
     expect(isObject(true)).toBe(false)
     expect(isObject(['a', 'b', 'c'])).toBe(false)
+  })
+})
+
+describe('isValidPath', () => {
+  it('functions correctly', () => {
+    expect(isValidPath('string')).toBe(true)
+    expect(isValidPath(new String('string'))).toBe(true)
+    expect(isValidPath(2)).toBe(true)
+    expect(isValidPath(true)).toBe(true)
+
+    expect(isValidPath({ })).toBe(false)
+    expect(isValidPath(function () {})).toBe(false)
+    expect(isValidPath(() => {})).toBe(false)
+    expect(isValidPath(['a', 'b', 'c'])).toBe(false)
   })
 })
 

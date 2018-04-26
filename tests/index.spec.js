@@ -1,5 +1,7 @@
 //@ts-check
 
+import 'whatwg-fetch'
+
 import route, { GET, POST, omnicFactory as R } from '../src'
 
 describe('asd', () => {
@@ -17,7 +19,7 @@ describe('asd', () => {
 
   it('asd', async () => {
 
-    console.log(await (await API.posts.all()).json());
+    console.log(await (await API.posts.get(1)()).json());
     expect(true).toBe(true)
   })
 })

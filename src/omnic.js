@@ -1,6 +1,6 @@
 import { makeRoute } from './transformers'
 import { BaseAdapter as Adapter } from './adapter'
-import { methods, isString } from './misc';
+import { methods, isString, isObject, routeConfigIsPath } from './misc'
 
 export const omnicFactory = (...stuff) => {
   var adapter = new Adapter();     // default fetch adapter here
@@ -42,8 +42,7 @@ export const omnicFactory = (...stuff) => {
 const aliases = {}
 methods.forEach(method => {
   aliases[method] = config => {
-    console.log(config)
-    if (isString(config)) config = { path: config }
+    if (routeConfigIsPath(config)) config = { path: config }
     else if (!config) config = {}
 
     config.method = method
