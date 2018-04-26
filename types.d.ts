@@ -1,16 +1,9 @@
-type Method = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'OPTIONS' | 'CONNECT' | 'TRACE' | 'PATCH'
-type Hook = (url: string, path: string[], config) => any
-type Alias = (config?) => Promise<any>
+type OmnicMethods = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS' | 'CONNECT' | 'TRACE'
+type OmnicHook = (url: string, config) => any
 
-type WithAliases<T> = T & {
-  readonly [method in Method]: Alias & {
-    __omnic_method__: method
-  }
-}
-
-interface LeafConfig {
-  beforeEach?: Hook
-  afterEach?: Hook
+interface OmnicConfig {
+  beforeEach?: OmnicHook
+  afterEach?: OmnicHook
   path?: string
   body?: any
   integrity?: string
@@ -25,15 +18,6 @@ interface LeafConfig {
   referrerPolicy?: ReferrerPolicy
 }
 
-interface Config extends LeafConfig {
-  method?: Method
+interface RouteConfig extends OmnicConfig {
+  method: string
 }
-
-interface OmnicFactory {
-  (...stuff): Omnic
-}
-
-type Omnic = WithAliases<{
-  <T>(routes: T): T
-  readonly with: OmnicFactory
-}>

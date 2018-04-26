@@ -9,7 +9,7 @@
 - Make adapters for your own clients (XmlHttpRequest, other frameworks and etc.)
 - Declarative and simple API description
 - Promise support
-- Transform request and response data and configs
+- Transform request and response data and configs in hooks
 - Intercept responses
 - Cancel requests
 - Automatically transforms request data to JSON
@@ -39,48 +39,47 @@ Using `omnic`, the client for this API can be written very simply, like this:
 
 ```js
 // client.js
-import route from 'omnic'
-const { GET, POST } = route;
+// Importing the route constructor and specific request method constructors
+import route, { GET, POST } from 'omnic';
 
-export const API = route({
-  api: route({
-    users: GET({
-      path: 'user/list'
+// Creating a client factory with pre-set configuration
+const generateClient = route.with({
+  path: 'https://someserver.com/api',
+  headers: { 'Authorization': 'Basic c29tZVVzZXJuYW1lOldvb29vb29vb3csIHdoYXQgYSBwYXNzd29yZCE=' }
+});
+
+// Generating a final API
+export const API = generateClient({
+  users: GET('user/list'),
+
+  user: userId => route({
+    get: GET(userId),
+    posts: GET('post'),
+    post: route({
+      add: (post, followRedirect) => POST({
+        body: post,
+        redirect: followRedirect ? 'follow' : 'no-follow',
+        path: ''
+      }),
+      get: postId => GET(postId)
     }),
+  }),
 
-    user: userId => route({
-      get: GET({
-        path: userId
-      }),
-
-      posts: GET({
-        path: 'post'
-      }),
-
-      post: route({
-        add: POST(),
-        get: postId => GET({
-          path: postId
-        })
-      }),
-    }),
-
-    isUp: GET({
-      path: ''
-    })
-  })
-}).api;
+  isUp: GET('')
+});
 ```
 
 ```js
-import { API } from 'client.js'
+import { API } from 'client.js';
 
 // Continue only if the API is up
 API.isUp().then(() => {
   API.users().then(/* Do something with the list of users here */);
   API.user(2).get().then(/* Do something with the 2nd user's data */);
   API.user(2).posts().then(/* Do something with the 2nd user's posts */);
-  API.user(2).post.add({ body: {/* Add post to user */} }).then(/* do something after this */);
-  API.user(2).post.get(1).then(/* Do something with the 2nd user's first post */);
+
+  // The second pair of braces is needed to send the resulting request
+  API.user(2).post.add({ /* Add post to user */ })().then(/* do something after this */);
+  API.user(2).post.get(1)().then(/* Do something with the 2nd user's first post */);
 });
 ```
