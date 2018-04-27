@@ -2,12 +2,12 @@ import { isFunction, isValidPath, isString, isObject, isRequestConfig, mergeConf
 import { requestMark, routeMark } from './consts'
 /**
  * Creates a route baking function for recursive calling and returns it.
- * If the current config contains root URI elements
+ * If the current config path contains root URI elements
  * (such as 'http://', 'https://', '/' or '//')
  * it returnes an already baked route instead.
  *
  * @export
- * @type {  }
+ * @type { Omnic }
  */
 export function makeOmnicRoute(routeBase) {
   // TODO - extract to a separate function
@@ -45,12 +45,11 @@ export function makeOmnicRoute(routeBase) {
           let { path, beforeEach, afterEach, ...configToPrepare } = config
           let finalConfig = prepareFetchConfig(configToPrepare);
 
-          // TODO: call hooks here
           if (beforeEach) {
             [path, finalConfig] = beforeEach(path, finalConfig);
           }
 
-          const result = await this.adapter.request(path, fin)
+          const result = await this.adapter.request(path, finalConfig)
 
           let response;
           if (afterEach) {
@@ -85,7 +84,7 @@ export function makeOmnicRoute(routeBase) {
 /**
  *
  *
- * @param {  } routeFunction
+ * @param { OmnicRoute | OmnicRequest | ((...args) => OmnicRoute) } routeFunction
  * @param { OmnicConfig } config
  * @param { string } key
  * @returns

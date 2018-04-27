@@ -49,8 +49,6 @@ export function prepareFetchConfig(config) {
     fetchConfig[key] = config[key];
   }
 
-
-
   if (isObject(fetchConfig.body)) {
     fetchConfig.body = JSON.stringify(fetchConfig.body);
   }
