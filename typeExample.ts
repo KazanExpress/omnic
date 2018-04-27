@@ -3,7 +3,10 @@ import route, { GET, POST, DELETE } from './src'
 const API = route({
   users: GET<User[]>(''),
   user: (userId: number) => route({
-    get: GET<User>(userId),
+    get: route<User>({
+      method: 'GET',
+      path: userId
+    }),
     getPost: (postId: number) => route({
       get: GET<Post>(postId),
       delete: DELETE<Post>(postId)

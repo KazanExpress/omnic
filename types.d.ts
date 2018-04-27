@@ -4,7 +4,7 @@ type OmnicHook = (url: string, config) => any
 interface OmnicConfig {
   beforeEach?: OmnicHook
   afterEach?: OmnicHook
-  path?: string
+  path?: string | number
   body?: any
   integrity?: string
   keepalive?: boolean
@@ -23,16 +23,15 @@ interface OmnicRequestConfig extends OmnicConfig {
 }
 
 interface Omnic {
-  // <U extends { [key: string]: OmnicRoute<any> | ((...args) => OmnicRoute<any>) }, T = any>(routeBase: U)
-    // : U extends OmnicRequestConfig ? OmnicRequest<T> : OmnicApiTree<U>
-  <U>(routeBase: U): U
+  <T extends BaseTree>(routeBase: T): OmnicApiTree<T>
+  <T = any>(requestConfig: OmnicRequestConfig): OmnicRequest<T>
 }
 
 interface OmnicAlias {
-  <T>(config?: OmnicConfig | string | number): OmnicRequest<T>//OmnicRoute<T>
+  <T>(config?: OmnicConfig | string | number): OmnicRoute<T>
 }
 
-interface OmnicRequest<T> {
+interface OmnicRequest<T> {               // TODO: Do something about this mess!
   (requestConfig?: OmnicConfig | string | number): Promise<Response<T>>
   ['__omnic__']: true
 }
@@ -42,10 +41,10 @@ interface OmnicRoute<T> {
   ['__omnic_route__']: true
 }
 
-// type OmnicRouteTree<O extends { [key: string]: ((...args) => any) | OmnicApiTree<any> }> = {
-//   [key in keyof O]: O[key] extends (...args) => any ? ReturnType<O[key]>
-// }
+type BaseTree = {
+  [key: string]: OmnicRoute<any> | ((...args) => OmnicRoute<any>) | OmnicApiTree<any> | ((...args) => OmnicApiTree<any>)
+}
 
-// type OmnicApiTree<O extends { [key: string]: ((...args) => any) | OmnicApiTree<any> }> = {
-//   [key in keyof O]: O[key] extends (...args) => any ? ReturnType<O[key]> : O[key] extends OmnicApiTree<any> ? OmnicApiTree<O[key]> : any
-// }
+type OmnicApiTree<O extends BaseTree> = {
+  [key in keyof O]: O[key] extends OmnicRoute<any> ? ReturnType<O[key]> : O[key] extends (...args) => OmnicRoute<infer T> ? ReturnType<OmnicRoute<T>> : O[key]
+}

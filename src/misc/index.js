@@ -7,7 +7,7 @@ export const isFunction = v => typeof v === 'function';
 export const isRequestConfig = v => isObject(v) && isString(v.method) && methods.some(m => m === v.method)
 export const routeConfigIsPath = v => isString(v) || (!!v && !isObject(v))
 
-export const isValidPath = p => isString(p) || typeof p === 'number' || typeof p === 'boolean'
+export const isValidPath = p => isString(p) || typeof p === 'number'
 
 export const getQueryString = (params) => {
   const toUri = k => val => val !== undefined ? `${encodeURIComponent(k)}=${encodeURIComponent(val)}` : '';
