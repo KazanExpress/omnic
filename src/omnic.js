@@ -1,7 +1,13 @@
-import { makeRoute } from './transformers'
-import { BaseAdapter as Adapter } from './adapter'
+import Adapter from './adapter'
+import { makeOmnicRoute } from './transformers'
 import { methods, isString, isObject, routeConfigIsPath } from './misc'
 
+/**
+ *
+ *
+ * @param {any} stuff
+ * @returns Omnic
+ */
 export const omnicFactory = (...stuff) => {
   var adapter = new Adapter();     // default fetch adapter here
   var interceptor = null;         // default interceptor here
@@ -25,7 +31,7 @@ export const omnicFactory = (...stuff) => {
     });
   }
 
-  const bound = makeRoute.bind({
+  const bound = makeOmnicRoute.bind({
     config,
     adapter,
     interceptor
@@ -37,7 +43,7 @@ export const omnicFactory = (...stuff) => {
 }
 
 /**
- * @type { { [K in OmnicMethods]: Function } }
+ * @type { { [K in OmnicMethod]: OmnicAlias } }
  */
 const aliases = {}
 methods.forEach(method => {

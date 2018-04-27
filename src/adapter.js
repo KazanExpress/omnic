@@ -1,6 +1,6 @@
 import { getQueryString } from './misc'
 
-export class BaseAdapter {
+export default class {
   request (url, config) {
     [url, config] = this.processParams(url, config)
     console.log(url)

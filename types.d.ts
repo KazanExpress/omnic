@@ -1,4 +1,4 @@
-type OmnicMethods = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS' | 'CONNECT' | 'TRACE'
+type OmnicMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS' | 'CONNECT' | 'TRACE'
 type OmnicHook = (url: string, config) => any
 
 interface OmnicConfig {
@@ -18,6 +18,34 @@ interface OmnicConfig {
   referrerPolicy?: ReferrerPolicy
 }
 
-interface RouteConfig extends OmnicConfig {
-  method: string
+interface OmnicRequestConfig extends OmnicConfig {
+  method: OmnicMethod
 }
+
+interface Omnic {
+  // <U extends { [key: string]: OmnicRoute<any> | ((...args) => OmnicRoute<any>) }, T = any>(routeBase: U)
+    // : U extends OmnicRequestConfig ? OmnicRequest<T> : OmnicApiTree<U>
+  <U>(routeBase: U): U
+}
+
+interface OmnicAlias {
+  <T>(config?: OmnicConfig | string): OmnicRequest<T>//OmnicRoute<T>
+}
+
+interface OmnicRequest<T> {
+  (requestConfig?: OmnicConfig | string): Promise<Response<T>>
+  ['__omnic__']: true
+}
+
+interface OmnicRoute<T> {
+  <U>(parentConfig: U, key?: string): U extends OmnicConfig | string ? OmnicRequest<T> : U
+  ['__omnic_route__']: true
+}
+
+// type OmnicRouteTree<O extends { [key: string]: ((...args) => any) | OmnicApiTree<any> }> = {
+//   [key in keyof O]: O[key] extends (...args) => any ? ReturnType<O[key]>
+// }
+
+// type OmnicApiTree<O extends { [key: string]: ((...args) => any) | OmnicApiTree<any> }> = {
+//   [key in keyof O]: O[key] extends (...args) => any ? ReturnType<O[key]> : O[key] extends OmnicApiTree<any> ? OmnicApiTree<O[key]> : any
+// }

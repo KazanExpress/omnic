@@ -1,5 +1,3 @@
-import { urlRegex } from '.'
-
 export const keysOf = Object.getOwnPropertyNames;
 
 export function baseMerge (parent, child, strategy) {
