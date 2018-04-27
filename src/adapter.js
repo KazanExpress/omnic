@@ -1,10 +1,10 @@
 import { getQueryString } from './misc'
 
 export default class {
-  request (url, config) {
+  async request (url, config) {
     [url, config] = this.processParams(url, config)
     console.log(url)
-    return fetch(url, config)
+    return (await fetch(url, config)).json()
   }
 
   processParams (url, config) {

@@ -31,8 +31,8 @@ interface OmnicAlias {
   <T>(config?: OmnicConfig | string | number): OmnicRoute<T>
 }
 
-interface OmnicRequest<T> {               // TODO: Do something about this mess!
-  (requestConfig?: OmnicConfig | string | number): Promise<Response<T>>
+interface OmnicRequest<T> {
+  (requestConfig?: OmnicConfig | string | number): Promise<T>
   ['__omnic__']: true
 }
 

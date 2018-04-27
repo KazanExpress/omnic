@@ -12,7 +12,7 @@ const API = route({
       delete: DELETE<Post>(postId)
     })
   })
-})
+});
 
 interface User {
   username: string
@@ -26,14 +26,14 @@ interface Post {
   created: Date
 }
 
-API.users().then(r => r.json().then(users => {
+API.users().then(users => {
   users[0].username
-}))
+})
 
-API.user(1).get().then(r => r.json().then(user => {
+API.user(1).get().then(user => {
   user.username
-}))
+})
 
-API.user(1).getPost(2).get().then(r => r.json().then(post => {
+API.user(1).getPost(2).get().then(post => {
   post.text
-}))
+})
