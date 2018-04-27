@@ -3,10 +3,7 @@ import { makeOmnicRoute } from './transformers'
 import { methods, isString, isObject, routeConfigIsPath } from './misc'
 
 /**
- *
- *
- * @param {any} stuff
- * @returns Omnic
+ * @type { OmnicFactory }
  */
 export const omnicFactory = (...stuff) => {
   var adapter = new Adapter();     // default fetch adapter here

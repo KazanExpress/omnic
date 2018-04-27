@@ -12,7 +12,7 @@ import { requestMark, routeMark } from './consts'
 export function makeOmnicRoute(routeBase) {
   // TODO - extract to a separate function
   /**
-   * @type {  }
+   * @type { OmnicRoute }
    */
   const bakeRoute = (parentConfig, key) => {
     if (routeConfigIsPath(parentConfig)) parentConfig = { path: parentConfig }
@@ -35,18 +35,31 @@ export function makeOmnicRoute(routeBase) {
         /**
          * @type { OmnicRequest }
          */
-        const requestFunction = requestConfig => {
+        const requestFunction = async requestConfig => {
           if (routeConfigIsPath(requestConfig)) requestConfig = { path: requestConfig }
 
           if (requestConfig) {
-            config = mergeConfigs(parentConfig, requestConfig)
+            config = mergeConfigs(parentConfig, this.config, requestConfig)
           }
 
-          const { path, ...configToPrepare } = config
+          let { path, beforeEach, afterEach, ...configToPrepare } = config
+          let finalConfig = prepareFetchConfig(configToPrepare);
 
           // TODO: call hooks here
+          if (beforeEach) {
+            [path, finalConfig] = beforeEach(path, finalConfig);
+          }
 
-          return this.adapter.request(path, prepareFetchConfig(configToPrepare))
+          const result = await this.adapter.request(path, fin)
+
+          let response;
+          if (afterEach) {
+            response = afterEach(result);
+          } else {
+            response = result;
+          }
+
+          return response;
         }
 
         requestFunction[requestMark] = true

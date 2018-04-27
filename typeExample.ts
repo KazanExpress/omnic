@@ -1,6 +1,6 @@
 import route, { GET, POST, DELETE } from './src'
 
-const API = route({
+const API = route.with()({
   users: GET<User[]>(''),
   user: (userId: number) => route({
     get: route<User>({
