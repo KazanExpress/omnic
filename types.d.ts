@@ -29,16 +29,16 @@ interface Omnic {
 }
 
 interface OmnicAlias {
-  <T>(config?: OmnicConfig | string): OmnicRequest<T>//OmnicRoute<T>
+  <T>(config?: OmnicConfig | string | number): OmnicRequest<T>//OmnicRoute<T>
 }
 
 interface OmnicRequest<T> {
-  (requestConfig?: OmnicConfig | string): Promise<Response<T>>
+  (requestConfig?: OmnicConfig | string | number): Promise<Response<T>>
   ['__omnic__']: true
 }
 
 interface OmnicRoute<T> {
-  <U>(parentConfig: U, key?: string): U extends OmnicConfig | string ? OmnicRequest<T> : U
+  <U>(parentConfig: U, key?: string): U extends OmnicConfig | string | number ? OmnicRequest<T> : U
   ['__omnic_route__']: true
 }
 

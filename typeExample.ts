@@ -2,9 +2,9 @@ import route, { GET, POST, DELETE } from './src'
 
 const API = route({
   users: GET<User[]>(''),
-  user: userId => route({
+  user: (userId: number) => route({
     get: GET<User>(userId),
-    post: postId => route({
+    getPost: (postId: number) => route({
       get: GET<Post>(postId),
       delete: DELETE<Post>(postId)
     })
@@ -31,6 +31,6 @@ API.user(1).get().then(r => r.json().then(user => {
   user.username
 }))
 
-API.user(1).post(2).get().then(r => r.json().then(post => {
+API.user(1).getPost(2).get().then(r => r.json().then(post => {
   post.text
 }))
