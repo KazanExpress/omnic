@@ -27,8 +27,7 @@ export const omnicFactory = (...stuff) => {
 
   const bound = makeOmnicRoute.bind({
     config,
-    adapter,
-    interceptor
+    adapter
   });
 
   bound.with = omnicFactory;

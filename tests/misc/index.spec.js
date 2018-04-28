@@ -66,10 +66,10 @@ describe('prepareFetchConfig', () => {
     expect(validFetchConfig).toHaveProperty('redirect')
     expect(validFetchConfig).toHaveProperty('referrerPolicy')
     expect(validFetchConfig).toHaveProperty('method')
+    expect(validFetchConfig).toHaveProperty('params')
     expect(validFetchConfig).not.toHaveProperty('beforeEach')
     expect(validFetchConfig).not.toHaveProperty('afterEach')
     expect(validFetchConfig).not.toHaveProperty('path')
-    expect(validFetchConfig).not.toHaveProperty('params')
   })
 })
 
@@ -149,10 +149,11 @@ describe('isObject', () => {
 describe('isValidPath', () => {
   it('functions correctly', () => {
     expect(isValidPath('string')).toBe(true)
+    expect(isValidPath('')).toBe(true)
     expect(isValidPath(new String('string'))).toBe(true)
     expect(isValidPath(2)).toBe(true)
-    expect(isValidPath(true)).toBe(true)
 
+    expect(isValidPath(true)).toBe(false)
     expect(isValidPath({ })).toBe(false)
     expect(isValidPath(function () {})).toBe(false)
     expect(isValidPath(() => {})).toBe(false)

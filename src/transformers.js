@@ -1,5 +1,6 @@
 import { isFunction, isValidPath, isString, isObject, isRequestConfig, mergeConfigs, methods, prepareFetchConfig, urlRegex, routeConfigIsPath } from './misc'
 import { requestMark, routeMark } from './consts'
+
 /**
  * Creates a route baking function for recursive calling and returns it.
  * If the current config path contains root URI elements
@@ -49,11 +50,14 @@ export function makeOmnicRoute(routeBase) {
             [path, finalConfig] = beforeEach(path, finalConfig);
           }
 
+          /**
+           * @type { Response }
+           */
           const result = await this.adapter.request(path, finalConfig)
 
           let response;
           if (afterEach) {
-            response = afterEach(result);
+            response = await afterEach(result);
           } else {
             response = result;
           }

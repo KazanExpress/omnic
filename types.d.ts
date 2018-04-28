@@ -3,8 +3,8 @@ type OmnicHook = (url: string, config) => any
 
 interface OmnicConfig {
   beforeEach?: (url: string, config: RequestInit) => [string, RequestInit]
-  afterEach?: <T = Response, U = any>(response: T) => U
-  path?: string | number
+  afterEach?: <T = any>(response: Response) => Promise<T>
+  path?: string | number //TODO: make URL
   body?: any
   integrity?: string
   keepalive?: boolean
@@ -22,25 +22,36 @@ interface OmnicRequestConfig extends OmnicConfig {
   method: OmnicMethod
 }
 
-type OmnicFactory = (...stuff) => Omnic
+type AcceptableConfig = OmnicConfig | string | number
 
-interface Omnic {
+interface Adapter {
+  request(url: string, config: RequestInit): Promise<Response>
+  processParams(url: string, config: RequestInit): [string, RequestInit]
+}
+
+type OmnicFactory = {
+  (adapter?: Adapter, config?: AcceptableConfig): Omnic
+  (config?: AcceptableConfig, adapter?: Adapter): Omnic
+}
+
+type WithFactory<T> = T & { with: OmnicFactory }
+
+type Omnic = WithFactory<{
   <T extends BaseTree>(routeBase: T): OmnicApiTree<T>
   <T = any>(requestConfig: OmnicRequestConfig): OmnicRequest<T>
-  with: OmnicFactory
-}
+}>
 
-interface OmnicAlias {
-  <T>(config?: OmnicConfig | string | number): OmnicRoute<T>
-}
+type OmnicAlias = WithFactory<{
+  <T>(config?: AcceptableConfig): OmnicRoute<T>
+}>
 
 interface OmnicRequest<T = any> {
-  (requestConfig?: OmnicConfig | string | number): Promise<T>
+  (requestConfig?: AcceptableConfig): Promise<T>
   ['__omnic__']: true
 }
 
 interface OmnicRoute<T = any> {
-  <U>(parentConfig: U, key?: string): U extends OmnicConfig | string | number ? OmnicRequest<T> : U
+  <U>(parentConfig: U, key?: string): U extends AcceptableConfig ? OmnicRequest<T> : U
   ['__omnic_route__']: true
 }
 
@@ -49,5 +60,5 @@ type BaseTree = {
 }
 
 type OmnicApiTree<O extends BaseTree> = {
-  [key in keyof O]: O[key] extends OmnicRoute<any> ? ReturnType<O[key]> : O[key] extends (...args) => OmnicRoute<infer T> ? ReturnType<OmnicRoute<T>> : O[key]
+  [key in keyof O]: O[key] extends OmnicRoute<any> ? ReturnType<O[key]> : O[key] extends (arg: infer A) => OmnicRoute<infer T> ? ((arg: A) => ReturnType<OmnicRoute<T>>) : O[key]
 }

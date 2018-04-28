@@ -1,5 +1,9 @@
 import { getQueryString } from './misc'
-
+/**
+ * @extends { Adapter }
+ * @type { Adapter }
+ * @export
+ */
 export default class {
   async request (url, config) {
     [url, config] = this.processParams(url, config)
