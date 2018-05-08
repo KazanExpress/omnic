@@ -7,7 +7,8 @@ import {
   isValidPath,
   methods,
   prepareFetchConfig
-} from '../../src/misc'
+} from '../../src/misc/index'
+import { OmnicConfig } from '../../src/types';
 
 describe('getQueryString', () => {
   it('processes truthy parameters', () => {
@@ -35,22 +36,20 @@ describe('getQueryString', () => {
 
 describe('prepareFetchConfig', () => {
   it('removes all invalid key-value pairs', () => {
-    const invalidFetchConfig = {
-      beforeEach: 'asd',
-      afterEach: 'asd',
-      path: 'asd',
-      params: 'asd',
+    const invalidFetchConfig: OmnicConfig = {
+      beforeEach: (s, r) => [s, r],
+      url: 'asdasd',
+      params: { p: 'asd' },
       body: 'asd',
       integrity: 'asd',
-      keepalive: 'asd',
+      keepalive: true,
       referrer: 'asd',
-      cache: 'asd',
-      credentials: 'asd',
+      cache: 'no-cache',
+      credentials: 'omit',
       headers: {},
-      mode: 'asd',
-      redirect: 'asd',
-      referrerPolicy: 'asd',
-      method: 'asd'
+      mode: 'cors',
+      redirect: 'error',
+      referrerPolicy: ''
     }
 
     const validFetchConfig = prepareFetchConfig(invalidFetchConfig)

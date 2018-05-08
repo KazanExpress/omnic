@@ -1,34 +1,35 @@
 import {
   baseMerge,
   override,
-  concat,
+  concatURL,
   pipe,
   reversePipe,
   merge,
   config,
   mergeConfigs
 } from '../../src/misc/mergeStrategies'
+import { OmnicConfig } from '../../src/types';
 
 describe('baseMerge', () => {
   it('returns child if no parent', () => {
     const parent = null;
     const child = 'child';
 
-    expect(baseMerge(parent, child)).toBe(child);
+    expect(baseMerge(parent, child, (...args) => args)).toBe(child);
   })
 
   it('returns parent if no child', () => {
     const parent = 'parent';
     const child = null;
 
-    expect(baseMerge(parent, child)).toBe(parent);
+    expect(baseMerge(parent, child, (...args) => args)).toBe(parent);
   })
 
   it('returns undefined if both are empty', () => {
     const parent = null;
     const child = null;
 
-    expect(baseMerge(parent, child)).toBe(undefined);
+    expect(baseMerge(parent, child, (...args) => args)).toBe(undefined);
   })
 
   it('applies a strategy if both a present', () => {
@@ -54,37 +55,32 @@ describe('misc strategies', () => {
   })
 
   test('concat', () => {
-    const parent = 'parent';
+    const parent = 'http://parent';
     const child = 'child';
 
-    expect(concat(parent, child)).toBe('parent/child');
+    expect(concatURL(parent, child)).toEqual(new URL('http://parent/child'));
   })
 
   test('pipe', () => {
-    let arr = [];
-    const parent = (arg) => arr.push('parent' + arg);
-    const child = (arg) => arr.push('child' + arg);
-    const piped = pipe(parent, child);
+    const parent = (arg) => 'parent' + arg;
+    const child = (arg) => 'child' + arg;
+    const piped = pipe(parent, child)!;
 
-    piped('/');
-
-    expect(arr).toEqual(['parent/', 'child/']);
+    expect(piped('/')).toEqual('childparent/');
   })
 
   test('reversePipe', () => {
-    let arr = [];
-    const parent1 = (arg) => arr.push('parent' + arg);
-    const parent2 = (arg) => arr.push('parent' + arg + arg);
-    const child = (arg) => arr.push('child' + arg);
-    const piped = reversePipe(reversePipe(parent1, child), parent2);
+    let arr: string[] = [];
+    const parent1 = (arg) => ('parent1' + arg);
+    const parent2 = (arg) => ('parent2' + arg);
+    const child = (arg) => ('child' + arg);
+    const piped = reversePipe(reversePipe(parent1, child)!, parent2)!;
 
-    piped('/');
-
-    expect(arr).toEqual(['parent//', 'child/', 'parent/']);
+    expect(piped('/')).toEqual('childparent1parent2');
   })
 
   test('merge', () => {
-    let parent = {
+    let parent: any = {
       a: undefined,
       b: 'bambuka'
     };
@@ -106,22 +102,24 @@ describe('misc strategies', () => {
 
   test('config', () => {
     let parentConfig = {
-      path: 'parent',
+      url: 'parent',
       headers: {
         'Accept': 'application/json'
       }
     };
     let childConfig = {
-      path: 'child',
+      url: 'child',
       headers: {
         'Content-Type': 'application/xml'
       }
     };
-    let otherConfig = null;
+
+    //@ts-ignore
+    let otherConfig: OmnicConfig = null;
 
     let mergedConfig = config(parentConfig, childConfig);
 
-    expect(mergedConfig.path).toEqual('parent/child');
+    expect(mergedConfig.url).toEqual('parent/child');
     expect(mergedConfig.headers).toEqual({
       'Accept': 'application/json',
       'Content-Type': 'application/xml'
@@ -129,17 +127,17 @@ describe('misc strategies', () => {
 
     mergedConfig = config(mergedConfig, otherConfig);
 
-    expect(mergedConfig.path).toEqual('parent/child');
+    expect(mergedConfig.url).toEqual('parent/child');
     expect(mergedConfig.headers).toEqual({
       'Accept': 'application/json',
       'Content-Type': 'application/xml'
     })
 
-    otherConfig = { path: 'https://someserver.com/api' };
+    otherConfig = { url: 'https://someserver.com/api' };
 
     mergedConfig = config(otherConfig, mergedConfig);
 
-    expect(mergedConfig.path).toEqual('https://someserver.com/api/parent/child');
+    expect(mergedConfig.url).toEqual('https://someserver.com/api/parent/child');
     expect(mergedConfig.headers).toEqual({
       'Accept': 'application/json',
       'Content-Type': 'application/xml'

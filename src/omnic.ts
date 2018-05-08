@@ -1,11 +1,9 @@
 import Adapter from './adapter'
 import { makeOmnicRoute } from './transformers'
-import { methods, isString, isObject, routeConfigIsPath } from './misc'
+import { methods, isString, isObject, routeConfigIsPath } from './misc/index'
+import { OmnicFactory, OmnicRequestConfig, OmnicMethod, OmnicAlias } from './types';
 
-/**
- * @type { OmnicFactory }
- */
-export const omnicFactory = (...stuff) => {
+export const omnicFactory: OmnicFactory = (...stuff) => {
   var adapter = new Adapter();     // default fetch adapter here
   var config = {};               // default global route config here
 
@@ -35,18 +33,14 @@ export const omnicFactory = (...stuff) => {
   return bound;
 }
 
-/**
- * @type { { [K in OmnicMethod]: OmnicAlias } }
- */
-const aliases = {}
-methods.forEach(method => {
-  aliases[method] = config => {
-    if (routeConfigIsPath(config)) config = { path: config }
+export const aliases = methods.reduce((p, method) => {
+  p[method] = config => {
+    if (routeConfigIsPath(config)) config = { url: config }
     else if (!config) config = {}
 
-    config.method = method
-    return omnicFactory()(config)
-  }
-})
+    const requestConfig: OmnicRequestConfig = { ...config, method };
+    return omnicFactory()(requestConfig)
+  };
 
-export { aliases }
+  return p;
+}, {} as { [K in OmnicMethod]: OmnicAlias });

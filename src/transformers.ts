@@ -1,5 +1,6 @@
-import { isFunction, isValidPath, isString, isObject, isRequestConfig, mergeConfigs, methods, prepareFetchConfig, urlRegex, routeConfigIsPath } from './misc'
-import { requestMark, routeMark } from './consts'
+import { isFunction, isValidPath, isString, isObject, isRequestConfig, mergeConfigs, methods, prepareFetchConfig, urlRegex, routeConfigIsPath, isRequest, isRoute } from './misc/index'
+import { requestMark, routeMark } from './misc/index'
+import { OmnicConfig } from './types';
 
 /**
  * Creates a route baking function for recursive calling and returns it.
@@ -12,10 +13,7 @@ import { requestMark, routeMark } from './consts'
  */
 export function makeOmnicRoute(routeBase) {
   // TODO - extract to a separate function
-  /**
-   * @type { OmnicRoute }
-   */
-  const bakeRoute = (parentConfig, key) => {
+  const bakeRoute = (parentConfig?: OmnicConfig, key?: string) => {
     if (routeConfigIsPath(parentConfig)) parentConfig = { path: parentConfig }
 
     if (isFunction(routeBase)) {
@@ -30,7 +28,6 @@ export function makeOmnicRoute(routeBase) {
       } else {
         if (key && !isValidPath(routeBase.path)) routeBase.path = key
 
-        let config = mergeConfigs(parentConfig, this.config, routeBase)
 
         // TODO - extract to a separate function
         /**
@@ -39,8 +36,11 @@ export function makeOmnicRoute(routeBase) {
         const requestFunction = async requestConfig => {
           if (routeConfigIsPath(requestConfig)) requestConfig = { path: requestConfig }
 
+          let config;
           if (requestConfig) {
             config = mergeConfigs(parentConfig, this.config, requestConfig)
+          } else {
+            config = mergeConfigs(parentConfig, this.config, routeBase)
           }
 
           let { path, beforeEach, afterEach, ...configToPrepare } = config
@@ -88,31 +88,29 @@ export function makeOmnicRoute(routeBase) {
 /**
  *
  *
- * @param { OmnicRoute | OmnicRequest | ((...args) => OmnicRoute) } routeFunction
- * @param { OmnicConfig } config
+ * @param { RouteTreeFunction } routeFunction
+ * @param { AcceptableConfig } config
  * @param { string } key
  * @returns
  */
-function processRouteFunction(routeFunction, config, key) {
-  if (routeConfigIsPath(config)) config = { path: config }
+function processRouteFunction(routeFunction, config, key?) {
+  if (routeConfigIsPath(config)) config = { url: config }
 
-  if (!routeFunction[requestMark]) {
-    if (routeFunction[routeMark]) {
-      return routeFunction(config, key)
-    } else {
-      return function () {
-        return routeFunction(...arguments)(config, key)
-      }
-    }
-  } else {
+  if (isRequest(routeFunction)) {
     return routeFunction
   }
+
+  if (isRoute(routeFunction)) {
+    return routeFunction(config, key)
+  }
+
+  return (...args) => routeFunction(...args)(config, key)
 }
 
 /**
  *
  *
- * @param { any } tree
+ * @param { BaseTree } tree
  * @param { OmnicConfig } config
  * @returns
  */
