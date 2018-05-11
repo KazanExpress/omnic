@@ -43,6 +43,8 @@ export interface Omnic {
   <T extends BaseTree>(routeBase: T): OmnicApiTree<T>
   <T = any>(requestConfig: OmnicRequestConfig): OmnicRoute<T>
   with: OmnicFactory
+  config: InternalConfig
+  adapter: Adapter
 }
 
 export interface OmnicAlias {

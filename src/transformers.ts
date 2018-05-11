@@ -1,6 +1,4 @@
-import { isFunction, isValidPath, isString, isObject, isRequestConfig, mergeConfigs, methods, prepareFetchConfig, urlRegex, routeConfigIsPath, isRequest, isRoute } from './misc/index'
-import { requestMark, routeMark } from './misc/index'
-import { OmnicConfig } from './types';
+import { OmnicConfig, Omnic, BaseTree, RouteTreeFunction, AcceptableConfig } from './types';
 
 /**
  * Creates a route baking function for recursive calling and returns it.
@@ -11,7 +9,7 @@ import { OmnicConfig } from './types';
  * @export
  * @type { Omnic }
  */
-export function makeOmnicRoute(routeBase) {
+export function makeOmnicRoute(this: Omnic, routeBase) {
   // TODO - extract to a separate function
   const bakeRoute = (parentConfig?: OmnicConfig, key?: string) => {
     if (routeConfigIsPath(parentConfig)) parentConfig = { path: parentConfig }
@@ -78,22 +76,14 @@ export function makeOmnicRoute(routeBase) {
 
   bakeRoute[routeMark] = true
 
-  if (this.config.path && urlRegex.test(this.config.path)) {
+  if (this.config.url && urlRegex.test(String(this.config.url))) {
     return bakeRoute()
   } else {
     return bakeRoute
   }
 }
 
-/**
- *
- *
- * @param { RouteTreeFunction } routeFunction
- * @param { AcceptableConfig } config
- * @param { string } key
- * @returns
- */
-function processRouteFunction(routeFunction, config, key?) {
+function processRouteFunction(routeFunction: RouteTreeFunction, config: AcceptableConfig, key?: string) {
   if (routeConfigIsPath(config)) config = { url: config }
 
   if (isRequest(routeFunction)) {
@@ -107,14 +97,7 @@ function processRouteFunction(routeFunction, config, key?) {
   return (...args) => routeFunction(...args)(config, key)
 }
 
-/**
- *
- *
- * @param { BaseTree } tree
- * @param { OmnicConfig } config
- * @returns
- */
-function processRouteTree(tree, config) {
+function processRouteTree(tree: BaseTree, config: OmnicConfig) {
   const finalAPI = {}
   for (const key in tree) if (isFunction(tree[key])) {
     finalAPI[key] = processRouteFunction(tree[key], config, key)

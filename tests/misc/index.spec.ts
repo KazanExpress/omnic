@@ -7,7 +7,7 @@ import {
   isValidPath,
   methods,
   prepareFetchConfig
-} from '../../src/misc/index'
+} from '../../src/misc'
 import { OmnicConfig } from '../../src/types';
 
 describe('getQueryString', () => {

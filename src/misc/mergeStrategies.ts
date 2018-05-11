@@ -4,9 +4,12 @@ import { keysOf } from './';
 type Strategy<T = any, C = T, R = C> = (parent: T, child: C) => R;
 type ConfigMergeStrategyObject = { [key in keyof OmnicConfig]-?: Strategy };
 
-export function baseMerge<P, C = P, R = C>(parent: P | null | undefined, child: C | null | undefined, strategy: Strategy<P, C, R>, defaultValue: P | C | R):
- P | C | R
-{
+export function baseMerge<P, C = P, R = C>(
+  parent: P | null | undefined,
+  child: C | null | undefined,
+  strategy: Strategy<P, C, R>,
+  defaultValue: P | C | R
+): P | C | R {
   const exists = <T>(o: T): o is Exclude<T, null | undefined> => o != undefined;
 
   if (exists(parent) && exists(child)) {
@@ -37,10 +40,10 @@ export const merge: Strategy = (p, c) => baseMerge<object>(p, c, (parent, child)
   return Object.assign({}, parent, child)
 }, {})
 
-export const override: Strategy = (p, c) => baseMerge(p, c, (_parent, child) => child, c)
+export const override: Strategy = (_parent, child) => child
 
 export const config = (p: OmnicConfig, c: OmnicConfig, customStrategy?: ConfigMergeStrategyObject) => baseMerge(p, c, (parent, child) => {
-  const configMergeStrategy: ConfigMergeStrategyObject = {
+  const configMergeStrategy: ConfigMergeStrategyObject = customStrategy || {
     beforeEach: pipe,
     afterEach: reversePipe,
     url: concatURL,
@@ -54,8 +57,7 @@ export const config = (p: OmnicConfig, c: OmnicConfig, customStrategy?: ConfigMe
     credentials: override,
     mode: override,
     redirect: override,
-    referrerPolicy: override,
-    ...(customStrategy || {})
+    referrerPolicy: override
   };
 
   return keysOf(configMergeStrategy).reduce((config, key) => {
@@ -78,9 +80,9 @@ export const config = (p: OmnicConfig, c: OmnicConfig, customStrategy?: ConfigMe
  * @returns { OmnicConfig } final merged config
  */
 export function mergeConfigs(...configs: OmnicConfig[]): OmnicConfig {
-  return configs.reduce((p, c) => config(p, c) || {});
+  return configs.reduce((p, c) => config(p, c));
 }
 
 export function mergeConfigsWithStrategy(strategy: ConfigMergeStrategyObject, ...configs: OmnicConfig[]): OmnicConfig {
-  return configs.reduce((p, c) => config(p, c, strategy) || {});
+  return configs.reduce((p, c) => config(p, c, strategy));
 }

@@ -1,4 +1,5 @@
-import { OmnicMethod, OmnicRoute, OmnicRequest, OmnicRequestConfig, AcceptableConfig, OmnicConfig } from '../types';
+import { OmnicConfig } from '../types';
+import { isObject } from './checks';
 
 export const urlRegex = /(?:\w*:\/)?\/.*/gm;
 
@@ -57,4 +58,6 @@ export function prepareFetchConfig(config: OmnicConfig): RequestInit {
   return fetchConfig;
 }
 
+export * from './checks'
+export * from './consts'
 export * from './mergeStrategies'

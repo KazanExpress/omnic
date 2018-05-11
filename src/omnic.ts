@@ -1,9 +1,11 @@
-import Adapter from './adapter'
-import { makeOmnicRoute } from './transformers'
-import { methods, isString, isObject, routeConfigIsPath } from './misc/index'
+import Adapter from './adapter';
+import { makeOmnicRoute } from './transformers';
 import { OmnicFactory, OmnicRequestConfig, OmnicMethod, OmnicAlias } from './types';
+import { isString, routeConfigIsPath } from './misc/checks';
+import { methods } from './misc/consts';
+import { mergeConfigs } from './misc/mergeStrategies';
 
-export const omnicFactory: OmnicFactory = (...stuff) => {
+export const omnicFactory: OmnicFactory = (...stuff: any[]) => {
   var adapter = new Adapter();     // default fetch adapter here
   var config = {};               // default global route config here
 
@@ -16,7 +18,7 @@ export const omnicFactory: OmnicFactory = (...stuff) => {
       } else if (type === 'object') {
         config = element;
       } else if (isString(element)) {
-        config = { path: element };
+        config = { url: element };
       } else {
         console.error('Warning! Wrong config for route:', element);
       }
@@ -24,19 +26,19 @@ export const omnicFactory: OmnicFactory = (...stuff) => {
   }
 
   const bound = makeOmnicRoute.bind({
-    config,
+    config: mergeConfigs(config, this.config),
     adapter
   });
 
-  bound.with = omnicFactory;
+  bound.with = omnicFactory.bind(bound);
 
   return bound;
 }
 
 export const aliases = methods.reduce((p, method) => {
   p[method] = config => {
-    if (routeConfigIsPath(config)) config = { url: config }
-    else if (!config) config = {}
+    if (!config) config = {}
+    else if (routeConfigIsPath(config)) config = { url: config }
 
     const requestConfig: OmnicRequestConfig = { ...config, method };
     return omnicFactory()(requestConfig)
