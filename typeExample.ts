@@ -1,14 +1,20 @@
-import { omnicFactory } from './src'
+import route, { GET, POST, DELETE } from './src'
 
-const route = omnicFactory();
-
-const { GET, POST } = route;
-
-const API = route({
-  users: GET<User[]>(),
-
-  user: id => route(GET<User>('user/' + id))()
-})
+const API = route.with({
+  afterEach: response => response.json()
+})({
+  users: GET<User[]>(''),
+  user: (userId: number) => route({
+    get: route<User>({
+      method: 'GET',
+      path: userId
+    }),
+    getPost: (postId: number) => route({
+      get: GET<Post>(postId),
+      delete: DELETE<Post>(postId)
+    })
+  })
+});
 
 interface User {
   username: string
@@ -22,4 +28,39 @@ interface Post {
   created: Date
 }
 
-API.user(2)
+API.users().then(users => {
+  users[0].username
+})
+
+API.user(1).get().then(user => {
+  user.username
+})
+
+API.user(1).getPost(2).get().then(post => {
+  post.text
+})
+
+
+///////////////////////////////////////////////////////////////////////////
+
+
+const API2 = route.with({
+  path: 'https://jsonplaceholder.typicode.com/',
+  afterEach(request) {
+    return request.json()
+  }
+})({
+  users: GET<User[]>(),
+  posts: route({
+    all: GET<Post[]>(''),
+
+    get: (postId: number) => GET<Post>(postId),
+    comments: postId => GET<Post>(postId + '/comments'),
+
+    internal: route.with('https://jsonplaceholder.typicode.com/')({
+      onlyPost: GET('posts/1')
+    })
+  })
+});
+
+API2.posts.get(2)()

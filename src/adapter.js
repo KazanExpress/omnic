@@ -1,10 +1,11 @@
 import { getQueryString } from './misc'
-
-// TODO: remove for production
-import 'whatwg-fetch'
-
-export class BaseAdapter {
-  request (url, config) {
+/**
+ * @extends { Adapter }
+ * @type { Adapter }
+ * @export
+ */
+export default class {
+  async request (url, config) {
     [url, config] = this.processParams(url, config)
     console.log(url)
     return fetch(url, config)
@@ -12,7 +13,7 @@ export class BaseAdapter {
 
   processParams (url, config) {
     if (config.params) {
-      let query = getQueryString(config.params).strip()
+      let query = getQueryString(config.params).trim()
 
       if (query) {
         url = url + (~url.indexOf('?') ? '&' : '?') + query

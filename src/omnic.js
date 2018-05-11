@@ -1,23 +1,23 @@
-import { makeRoute } from './transformers'
-import { BaseAdapter as Adapter } from './adapter'
-import { methods, isString } from './misc';
+import Adapter from './adapter'
+import { makeOmnicRoute } from './transformers'
+import { methods, isString, isObject, routeConfigIsPath } from './misc'
 
+/**
+ * @type { OmnicFactory }
+ */
 export const omnicFactory = (...stuff) => {
   var adapter = new Adapter();     // default fetch adapter here
-  var interceptor = null;         // default interceptor here
   var config = {};               // default global route config here
 
   if (stuff) {
     stuff.forEach(element => {
       const type = typeof element;
 
-      if (type === 'function') {
-        interceptor = element;
-      } else if (type === 'object' && typeof Adapter !== 'undefined' && element instanceof Adapter) {
+      if (type === 'object' && typeof Adapter !== 'undefined' && element instanceof Adapter) {
         adapter = element;
       } else if (type === 'object') {
         config = element;
-      } else if (type === 'string') {
+      } else if (isString(element)) {
         config = { path: element };
       } else {
         console.error('Warning! Wrong config for route:', element);
@@ -25,10 +25,9 @@ export const omnicFactory = (...stuff) => {
     });
   }
 
-  const bound = makeRoute.bind({
+  const bound = makeOmnicRoute.bind({
     config,
-    adapter,
-    interceptor
+    adapter
   });
 
   bound.with = omnicFactory;
@@ -37,13 +36,12 @@ export const omnicFactory = (...stuff) => {
 }
 
 /**
- * @type { { [K in OmnicMethods]: Function } }
+ * @type { { [K in OmnicMethod]: OmnicAlias } }
  */
 const aliases = {}
 methods.forEach(method => {
   aliases[method] = config => {
-    console.log(config)
-    if (isString(config)) config = { path: config }
+    if (routeConfigIsPath(config)) config = { path: config }
     else if (!config) config = {}
 
     config.method = method

@@ -4,7 +4,10 @@ export const urlRegex = /(?:\w*:\/)?\/.*/gm;
 export const isString = v => typeof v === 'string' || (!!v && isFunction(v.valueOf) && typeof v.valueOf() === 'string');
 export const isObject = v => Object.prototype.toString.apply(v) === '[object Object]';
 export const isFunction = v => typeof v === 'function';
-export const isConfig = v => isObject(v) && isString(v.method) && methods.some(m => m === v.method)
+export const isRequestConfig = v => isObject(v) && isString(v.method) && methods.some(m => m === v.method)
+export const routeConfigIsPath = v => isString(v) || (!!v && !isObject(v))
+
+export const isValidPath = p => isString(p) || typeof p === 'number'
 
 export const getQueryString = (params) => {
   const toUri = k => val => val !== undefined ? `${encodeURIComponent(k)}=${encodeURIComponent(val)}` : '';
@@ -33,17 +36,21 @@ export const getQueryString = (params) => {
  */
 export function prepareFetchConfig(config) {
   /**
-   * @type { (keyof RequestInit)[] }
+   * @type { ((keyof RequestInit) | 'params')[] }
    */
-  const validKeys = ['body', 'integrity', 'keepalive', 'referrer', 'cache', 'credentials', 'headers', 'mode', 'redirect', 'referrerPolicy', 'method'];
+  const validKeys = ['body', 'integrity', 'keepalive', 'referrer', 'cache', 'credentials', 'headers', 'mode', 'redirect', 'referrerPolicy', 'method', 'params'];
 
   /**
-   * @type { RequestInit }
+   * @type { RequestInit & { params: { [key: string]: string } } }
    */
   const fetchConfig = {};
 
   for (const key of validKeys) {
     fetchConfig[key] = config[key];
+  }
+
+  if (isObject(fetchConfig.body)) {
+    fetchConfig.body = JSON.stringify(fetchConfig.body);
   }
 
   return fetchConfig;
