@@ -1,4 +1,4 @@
-# omnic (WORK IN PROGRESS)
+# omnic (PROOF-OF-CONCEPT, NOT PRODUCTION-READY)
 > Epic declarative promise-based API client for the browser and node.js
 
 `npm i -S omnic`

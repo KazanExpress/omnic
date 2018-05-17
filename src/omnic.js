@@ -7,7 +7,7 @@ import { methods, isString, isObject, routeConfigIsPath } from './misc/index'
  */
 export const omnicFactory = (...stuff) => {
   var adapter = new Adapter();     // default fetch adapter here
-  var config = {};               // default global route config here
+  var config = {};                // default global route config here
 
   if (stuff) {
     stuff.forEach(element => {
