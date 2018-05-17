@@ -13,7 +13,7 @@ export const omnicFactory = (...stuff) => {
     stuff.forEach(element => {
       const type = typeof element;
 
-      if (type === 'object' && typeof Adapter !== 'undefined' && element instanceof Adapter) {
+      if (typeof Adapter !== 'undefined' && element instanceof Adapter) {
         adapter = element;
       } else if (type === 'object') {
         config = element;
@@ -38,7 +38,7 @@ export const omnicFactory = (...stuff) => {
 /**
  * @type { { [K in OmnicMethod]: OmnicAlias } }
  */
-const aliases = {}
+const aliases = {};
 methods.forEach(method => {
   aliases[method] = config => {
     if (routeConfigIsPath(config)) config = { path: config }
@@ -47,6 +47,6 @@ methods.forEach(method => {
     config.method = method
     return omnicFactory()(config)
   }
-})
+});
 
 export { aliases }
