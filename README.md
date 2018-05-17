@@ -83,3 +83,38 @@ API.isUp().then(() => {
   API.user(2).post.get(1)().then(/* Do something with the 2nd user's first post */);
 });
 ```
+
+## Route configuration
+
+Below is a full typed config that can be accepted by an alias function (`GET`, `POST` and etc.)
+
+```ts
+interface OmnicConfig {
+  // Hook to modify the fetch config right before sending the request
+  beforeEach: (url: string, config: RequestInit) => [string, RequestInit]
+
+  // Hook to process the response before returning it
+  afterEach: (response: Response) => Promise
+
+  // A suburl path to send request to
+  path: string | number
+
+  // URL params (like '?param=1&another=two')
+  params: object
+
+  // Everything else is just a plain old fetch config
+  body: any
+  integrity: string
+  keepalive: boolean
+  referrer: string
+  cache: "default" | "no-store" | "reload" | "no-cache" | "force-cache"
+  credentials: "omit" | "same-origin" | "include"
+  headers: object
+  mode: "same-origin" | "navigate" | "no-cors" | "cors"
+  redirect: "follow" | "error" | "manual"
+  referrerPolicy: "" | "no-referrer" | "no-referrer-when-downgrade" | "origin-only" | "origin-when-cross-origin" | "unsafe-url"
+}
+```
+
+
+The `route` function can also be used instead with an addition of another field: `method`.
