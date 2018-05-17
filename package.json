@@ -10,7 +10,7 @@
   "scripts": {
     "test": "jest",
     "build": "node build",
-    "preversion": "npm run docs && npm run build && (git add .) && git commit -m Docs-and-build.",
+    "preversion": "npm run build && (git add .) && git commit -m Docs-and-build.",
     "patch": "npm version patch && npm publish && git push",
     "minor": "npm version minor && npm publish && git push",
     "major": "npm version major && npm publish && git push"
