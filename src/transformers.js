@@ -1,4 +1,4 @@
-import { isFunction, isValidPath, isString, isObject, isRequestConfig, mergeConfigs, methods, prepareFetchConfig, urlRegex, routeConfigIsPath } from './misc'
+import { isFunction, isValidPath, isString, isObject, isRequestConfig, mergeConfigs, methods, prepareFetchConfig, urlRegex, routeConfigIsPath } from './misc/index'
 import { requestMark, routeMark } from './consts'
 
 /**

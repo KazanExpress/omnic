@@ -2,12 +2,18 @@
   "name": "omnic",
   "version": "0.0.0",
   "description": "Epic declarative API client",
-  "main": "index.js",
-  "module": "index.js",
-  "esnext": "index.js",
+  "main": "lib/cjs.js",
+  "module": "lib/esnext.js",
+  "esnext": "lib/esnext.js",
+  "unpkg": "lib/umd.js",
   "types": "types",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "node build",
+    "preversion": "npm run docs && npm run build && (git add .) && git commit -m Docs-and-build.",
+    "patch": "npm version patch && npm publish && git push",
+    "minor": "npm version minor && npm publish && git push",
+    "major": "npm version major && npm publish && git push"
   },
   "repository": {
     "type": "git",
@@ -23,19 +29,31 @@
     "@types/node": "^9.6.5",
     "babel-core": "^6.26.0",
     "babel-jest": "^22.4.3",
+    "babel-plugin-es6-promise": "^1.1.1",
+    "babel-plugin-transform-async-to-promises": "^0.5.5",
+    "babel-plugin-transform-es2015-arrow-functions": "^6.22.0",
+    "babel-plugin-transform-object-assign": "^6.22.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.1",
+    "babel-preset-es2015-rollup": "^3.0.0",
     "babel-preset-jest": "^22.4.3",
+    "babel-preset-stage-0": "^6.24.1",
+    "babel-preset-stage-3": "^6.24.1",
+    "es6-promise": "^4.2.4",
+    "fs-extra": "^5.0.0",
     "jest": "^22.4.3",
+    "rollup": "^0.58.2",
+    "rollup-plugin-babel": "^3.0.4",
+    "rollup-plugin-commonjs": "^9.1.0",
+    "rollup-plugin-css-only": "^0.4.0",
+    "rollup-plugin-node-resolve": "^3.3.0",
+    "rollup-plugin-regenerator": "^0.5.4",
+    "rollup-plugin-uglify": "^3.0.0",
     "whatwg-fetch": "^2.0.4"
   },
   "jest": {
     "transform": {
       "^.+\\.jsx?$": "babel-jest"
     }
-  },
-  "babel": {
-    "presets": [
-      "env"
-    ]
   }
 }

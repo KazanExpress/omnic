@@ -1,6 +1,6 @@
 import Adapter from './adapter'
 import { makeOmnicRoute } from './transformers'
-import { methods, isString, isObject, routeConfigIsPath } from './misc'
+import { methods, isString, isObject, routeConfigIsPath } from './misc/index'
 
 /**
  * @type { OmnicFactory }
