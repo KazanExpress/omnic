@@ -1,0 +1,15 @@
+<route name="api">
+  <get name="users" path="'user/list'"/>
+
+  <route name="user" params="id">
+    <get name="get" path="id"/>
+    <post name="posts" path="post"/>
+
+    <route name="post">
+      <post name="add"/>
+      <get name="get" params="id" path="id"/>
+    </route>
+  </route>
+
+  <route name="isUp" path="''"></route>
+</route>
