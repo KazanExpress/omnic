@@ -11,6 +11,9 @@ export class DefaultAdapter extends Adapter {
   }
 }
 
+
+// Do we even need these two?
+
 export class DefaultJsonAdapter extends Adapter {
   public request(url: string, config: RequestInit) {
     return new AbortablePromise(_abort => (resolve, reject) => {
