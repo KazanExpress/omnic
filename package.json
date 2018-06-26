@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/KazanExpress/omnic#readme",
   "devDependencies": {
+    "@types/jest": "^22.2.3",
     "@types/node": "^9.6.5",
     "babel-core": "^6.26.0",
     "babel-jest": "^22.4.3",
@@ -42,6 +43,8 @@
     "es6-promise": "^4.2.4",
     "fs-extra": "^5.0.0",
     "jest": "^22.4.3",
+    "ts-jest": "^22.4.5",
+    "typescript": "^2.8.3",
     "rollup": "^0.58.2",
     "rollup-plugin-babel": "^3.0.4",
     "rollup-plugin-commonjs": "^9.1.0",
@@ -53,7 +56,24 @@
   },
   "jest": {
     "transform": {
-      "^.+\\.jsx?$": "babel-jest"
-    }
+      "^.+\\.jsx?$": "babel-jest",
+      "^.+\\.ts$": "ts-jest"
+    },
+    "testMatch": [
+      "<rootDir>/tests/**/?(*.)test.ts"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
+  },
+  "babel": {
+    "presets": [
+      "env"
+    ]
   }
 }
