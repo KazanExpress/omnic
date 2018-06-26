@@ -1,4 +1,4 @@
-type PromiseArg<T> = (resolve: (value?: T | PromiseLike<T>) => void, reject: (reason?: any) => void, onfinally?: (() => void) | null) => void;
+type PromiseArg<T> = (resolve: (value?: T | PromiseLike<T>) => void, reject: (reason?: any) => void) => void;
 type AbortablePromiseArg<T> = (abort: (reason?: any) => void) => PromiseArg<T>;
 
 export default class AbortablePromise<T = any> implements AbortController, Promise<T> {
@@ -38,9 +38,9 @@ export default class AbortablePromise<T = any> implements AbortController, Promi
       this['[[Promise]]'] = executor as Promise<T>;
     }
 
-    this.then = this['[[Promise]]'].then;
-    this.catch = this['[[Promise]]'].catch;
-    this.finally = this['[[Promise]]'].finally;
+    this.then = this['[[Promise]]'].then.bind(this['[[Promise]]']);
+    this.catch = this['[[Promise]]'].catch.bind(this['[[Promise]]']);
+    this['[[Promise]]'].finally && (this.finally = this['[[Promise]]'].finally.bind(this['[[Promise]]']));
   }
 
   protected _isPromiseWrapper: boolean = false;
@@ -51,7 +51,7 @@ export default class AbortablePromise<T = any> implements AbortController, Promi
 
   then: <TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | null | undefined, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null | undefined) => Promise<TResult1 | TResult2>;
   catch: <TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | null | undefined) => Promise<T | TResult>;
-  finally: (onfinally?: (() => void) | null) => Promise<T>;
+  finally: (onfinally?: (() => void) | null) => Promise<T> = () => Promise.reject();
   abort: () => void;
   signal: AbortSignal;
 }

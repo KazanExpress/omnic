@@ -14,6 +14,15 @@
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
-    "noImplicitAny": false
-  }
+    "noImplicitAny": false,
+    "typeRoots": [
+      "@types/node",
+      "@types/jest"
+    ]
+  },
+  "include": [
+    "@types/node",
+    "@types/jest",
+    "./src"
+  ]
 }

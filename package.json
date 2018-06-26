@@ -36,7 +36,9 @@
       "^.+\\.jsx?$": "babel-jest",
       "^.+\\.ts$": "ts-jest"
     },
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "testMatch": [
+      "<rootDir>/tests/**/?(*.)test.ts"
+    ],
     "moduleFileExtensions": [
       "ts",
       "tsx",
