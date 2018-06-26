@@ -1,37 +1,28 @@
-import CancellablePromise from './cancellablePromise';
+import AbortablePromise from './abortable/abortablePromise';
+import abortableFetch from './abortable/abortableFetch';
 
 export default abstract class Adapter {
-  public abstract request<T>(url: string, config: RequestInit): CancellablePromise<T>;
+  public abstract request(url: string, config: RequestInit): Promise<any>;
 }
 
 export class DefaultAdapter extends Adapter {
-  public request<T = Response>(url: string, config: RequestInit) {
-    const controller = new AbortController();
-    config = {
-      signal: controller.signal,
-      ...config
-    }
-
-    return new CancellablePromise<T>(fetch(url, config), controller);
+  public request(url: string, config: RequestInit) {
+    return abortableFetch(url, config);
   }
 }
 
-export class DefaultJsonAdapter extends DefaultAdapter {
-  public request<T>(url: string, config: RequestInit) {
-    const response = super.request(url, config);
-
-    return new CancellablePromise<T>((resolve, reject) => {
-      response.then(resp => resp.json().then(resolve).catch(reject)).catch(reject)
-    }, { signal: response.signal, abort: response.cancel });
+export class DefaultJsonAdapter extends Adapter {
+  public request(url: string, config: RequestInit) {
+    return new AbortablePromise(_abort => (resolve, reject) => {
+      abortableFetch(url, config).then(resp => resp.json().then(resolve).catch(reject)).catch(reject);
+    });
   }
 }
 
-export class DefaultStreamAdapter extends DefaultAdapter {
-  public request<T = ReadableStream | null>(url: string, config: RequestInit) {
-    const response = super.request(url, config);
-
-    return new CancellablePromise<T>((resolve, reject) => {
-      response.then(resp => resolve(resp.body)).catch(reject)
-    }, { signal: response.signal, abort: response.cancel });
+export class DefaultStreamAdapter extends Adapter {
+  public request(url: string, config: RequestInit) {
+    return new AbortablePromise<ReadableStream | null>(_abort => (resolve, reject) => {
+      abortableFetch(url, config).then(resp => resolve(resp.body)).catch(reject);
+    });
   }
 }
