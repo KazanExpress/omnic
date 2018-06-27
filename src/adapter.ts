@@ -12,8 +12,8 @@ export class DefaultAdapter extends Adapter {
 // Do we even need these two here?
 
 export class DefaultJsonAdapter extends Adapter {
-  public request<T>(url: string, config: RequestInit) {
-    return new Promise<T>((resolve, reject) => {
+  public request(url: string, config: RequestInit) {
+    return new Promise<any>((resolve, reject) => {
       fetch(url, config).then(resp => resp.json().then(resolve).catch(reject)).catch(reject);
     });
   }
