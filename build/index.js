@@ -17,8 +17,8 @@ const roll = (format, name, conf) => {
   );
 }
 
-if (fs.pathExistsSync('lib')) {
-  fs.removeSync('lib')
+if (fs.pathExistsSync('dist')) {
+  fs.removeSync('dist')
 }
 
 for (const format in bundles) {

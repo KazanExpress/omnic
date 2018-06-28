@@ -1,9 +1,9 @@
 module.exports = {
   // Lib main entry
-  entry: 'src/index.js',
+  entry: 'lib/index.js',
 
   // Lib compiled output
-  output: 'lib',
+  output: 'dist',
 
   // Lib name
   name: 'omnic'

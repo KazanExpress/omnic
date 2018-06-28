@@ -118,3 +118,10 @@ interface OmnicConfig {
 
 
 The `route` function can also be used instead with an addition of another field: `method`.
+
+
+### Polyfills required for IE <11
+
+`url-polyfill`
+`whatwg-fetch`
+`es6-promise`

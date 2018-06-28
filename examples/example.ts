@@ -1,4 +1,4 @@
-import route, { GET, POST, DELETE } from './src'
+import route, { GET, POST, DELETE } from '../lib'
 
 const API = route.with({
   afterEach: response => response.json()
@@ -9,10 +9,13 @@ const API = route.with({
       method: 'GET',
       path: userId
     }),
-    getPost: (postId: number) => route({
-      get: GET<Post>(postId),
-      delete: DELETE<Post>(postId)
-    })
+    post: {
+      get: (postId: number) => route({
+        get: GET<Post>(postId),
+        delete: DELETE<Post>(postId)
+      }),
+      add: POST
+    }
   })
 });
 

@@ -23,6 +23,6 @@
   "include": [
     "@types/node",
     "@types/jest",
-    "./src"
+    "./lib"
   ]
 }
