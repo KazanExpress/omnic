@@ -1,11 +1,14 @@
 import Adapter from '../adapter';
 import { methodAlias } from '../request';
 
-export type OmnicMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS' | 'CONNECT' | 'TRACE'
-export type MethodCollection = { [Key in OmnicMethod]: typeof methodAlias }
+export type OmnicMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS' | 'CONNECT' | 'TRACE';
+export type MethodCollection = { [Key in OmnicMethod]: typeof methodAlias };
 
+type ExcludeKey<Type, Key = keyof Type> = {
+  [key in Exclude<keyof Type, Key>]?: Type[key]
+}
 
-export interface OmnicRequestInit extends RequestInit {
+export interface OmnicRequestInit extends ExcludeKey<RequestInit, 'window'> {
   params?: { [key: string]: string | string[] }
   method?: OmnicMethod
 }

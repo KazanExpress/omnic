@@ -1,6 +1,6 @@
-import { OmnicConfig } from '../types';
-import { mergeStrategyFactory } from './base';
-import { keysOf } from '../misc';
+import { OmnicConfig } from '../types'
+import { mergeStrategyFactory } from './base'
+import { keysOf } from '../misc'
 
 type pipedFunction = ((...args: any[]) => any[]);
 
@@ -11,23 +11,23 @@ export const pipe = mergeStrategyFactory<pipedFunction>(
       parent.apply(parent, args)
     )
   )
-);
+)
 
-export const reversePipe = (parent: pipedFunction, child: pipedFunction) => pipe(child, parent);
+export const reversePipe = (parent: pipedFunction, child: pipedFunction) => pipe(child, parent)
 
 export const concatURLs = mergeStrategyFactory<URL | string, URL>((parent, child) => {
   if (child instanceof URL)
-    child = String(child);
+    child = String(child)
 
-  return new URL(child, parent);
-});
+  return new URL(child, parent)
+})
 
 export const merge = mergeStrategyFactory<object | undefined>((parent, child) => ({
   ...parent,
   ...child
-}), {});
+}), {})
 
-export const override = mergeStrategyFactory((_parent, child) => child);
+export const override = mergeStrategyFactory((_parent, child) => child)
 
 export const config = mergeStrategyFactory<OmnicConfig | undefined>((parent, child) => {
   const configMergeStrategies: { [key in keyof OmnicConfig]-?: Function } = {
@@ -47,8 +47,7 @@ export const config = mergeStrategyFactory<OmnicConfig | undefined>((parent, chi
     referrerPolicy: override,
     adapter: override,
     method: override,
-    signal: override,
-    window: override
+    signal: override
   }
 
   const keys = keysOf(configMergeStrategies)
