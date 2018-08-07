@@ -7,7 +7,7 @@ export type MethodCollection = { [Key in OmnicMethod]: typeof methodAlias }
 
 export interface OmnicRequestInit extends RequestInit {
   params?: { [key: string]: string | string[] }
-  method: OmnicMethod
+  method?: OmnicMethod
 }
 
 export interface OmnicConfig extends OmnicRequestInit {
@@ -21,9 +21,16 @@ export interface OmnicConfig extends OmnicRequestInit {
   afterEach?: <T>(response: Response) => Promise<T>
 
   // A suburl path to send request to
-  url?: string
+  url?: string | URL
 
   adapter?: Adapter
+}
+
+export interface InternalOmnicConfig extends OmnicConfig {
+  // A suburl path to send request to
+  url: URL
+
+  method: OmnicMethod
 }
 
 export type AcceptableConfig = OmnicConfig | string | number

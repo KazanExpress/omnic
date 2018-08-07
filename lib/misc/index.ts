@@ -9,3 +9,5 @@ export function isObject(v): v is object {
 export function isFunction(v): v is Function {
   return typeof v === 'function';
 }
+
+export const keysOf = Object.getOwnPropertyNames;
