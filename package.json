@@ -8,7 +8,7 @@
   "unpkg": "lib/umd.js",
   "types": "types",
   "scripts": {
-    "test": "jest",
+    "test": "jest --coverage",
     "build": "node build",
     "preversion": "npm run docs && npm run build && (git add .) && git commit -m Docs-and-build.",
     "patch": "npm version patch && npm publish && git push",
@@ -59,6 +59,19 @@
       "^.+\\.jsx?$": "babel-jest",
       "^.+\\.ts$": "ts-jest"
     },
+    "coverageThreshold": {
+      "global": {
+        "branches": 0,
+        "functions": 0,
+        "lines": 0,
+        "statements": 0
+      }
+    },
+    "collectCoverageFrom": [
+      "lib/**/*.ts",
+      "!lib/**/*.schema.ts",
+      "!lib/schema/*.ts"
+    ],
     "testMatch": [
       "<rootDir>/tests/**/?(*.)test.ts"
     ],

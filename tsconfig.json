@@ -11,7 +11,6 @@
       "esnext"
     ],
     "target": "es2015",
-    "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "alwaysStrict": true,
@@ -19,6 +18,10 @@
     "strictFunctionTypes": true,
     "noImplicitAny": false,
     "typeRoots": [
+      "./lib/types",
+      "@types"
+    ],
+    "types": [
       "@types/node",
       "@types/jest"
     ]
@@ -26,6 +29,7 @@
   "include": [
     "@types/node",
     "@types/jest",
-    "./lib"
+    "./lib",
+    "./tests"
   ]
 }

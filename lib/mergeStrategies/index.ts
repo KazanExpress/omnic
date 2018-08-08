@@ -2,7 +2,7 @@ import { OmnicConfig } from '../types'
 import { mergeStrategyFactory } from './base'
 import { keysOf } from '../misc'
 
-type pipedFunction = ((...args: any[]) => any[]);
+type pipedFunction = (...args: any[]) => any[];
 
 export const pipe = mergeStrategyFactory<pipedFunction>(
   (parent, child) => (
@@ -22,14 +22,14 @@ export const concatURLs = mergeStrategyFactory<URL | string, URL>((parent, child
   return new URL(child, parent)
 })
 
-export const merge = mergeStrategyFactory<object | undefined>((parent, child) => ({
+export const merge = mergeStrategyFactory<object>((parent, child) => ({
   ...parent,
   ...child
 }), {})
 
 export const override = mergeStrategyFactory((_parent, child) => child)
 
-export const config = mergeStrategyFactory<OmnicConfig | undefined>((parent, child) => {
+export const config = mergeStrategyFactory<OmnicConfig>((parent, child) => {
   const configMergeStrategies: { [key in keyof OmnicConfig]-?: Function } = {
     beforeEach: pipe,
     afterEach: reversePipe,
@@ -64,5 +64,5 @@ export const config = mergeStrategyFactory<OmnicConfig | undefined>((parent, chi
 }, {})
 
 export function mergeConfigs(...configs: (OmnicConfig | undefined)[]) {
-  return configs.reduce(config)
+  return configs.reduce(config) as OmnicConfig // Sorry, typescript, I know better! 😁
 }
