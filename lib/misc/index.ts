@@ -1,5 +1,5 @@
 export function isString(v): v is string {
-  return typeof v === 'string' || (!!v && isFunction(v.valueOf) && typeof v.valueOf() === 'string');
+  return typeof v === 'string' || v instanceof String;
 }
 
 export function isObject(v): v is object {

@@ -1,24 +1,8 @@
 export type MergeStrategy<
-  Arg = any,
-  Result extends Arg = Arg
-> = (parent: Arg, child: Arg) => Result;
-
-export type MergeStrategyFactory = {
-  <Arg = any, Result extends Arg = Arg>(
-    strategy: (
-      parent: Exclude<Arg, undefined>,
-      child: Exclude<Arg, undefined>,
-    ) => Exclude<Result, undefined>,
-  ): <A extends Arg | undefined = Arg, R extends Arg | undefined = A>(parent: A, child: A) => R,
-
-  <Arg = any, Result extends Exclude<Arg, undefined> = Exclude<Arg, undefined>>(
-    strategy: (
-      parent: Exclude<Arg, undefined>,
-      child: Exclude<Arg, undefined>,
-    ) => Exclude<Result, undefined>,
-    defaultResult: Result
-  ): <A extends Arg | undefined = Arg, R extends Exclude<Arg, undefined> = Result>(parent: A, child: A) => R
-};
+  P = any,
+  C = P,
+  R extends (P | C) = P
+> = (parent: P, child: C) => R;
 
 /**
  * Filters out all the undefineds from arguments or at least mixes them into resulting types with a bunch of dynamic type inference
@@ -28,7 +12,8 @@ export type MergeStrategyFactory = {
  * @param strategy must be a predictable merge strategy function that doesn't accept nor doesn't return any undefined value
  * @param [defaultResult] is a default value in case of one of arguments being undefined
  */
-export const mergeStrategyFactory: MergeStrategyFactory = (
+//@ts-ignore
+export const mergeStrategyFactory = (
   strategy,
   defaultResult?
 ) => (parent, child) => {

@@ -82,7 +82,10 @@
       "jsx",
       "json",
       "node"
-    ]
+    ],
+    "moduleNameMapper": {
+      "omnic/(.*)": "<rootDir>/lib/$1"
+    }
   },
   "babel": {
     "presets": [

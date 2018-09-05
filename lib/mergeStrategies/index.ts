@@ -1,6 +1,6 @@
-import { OmnicConfig } from '../types'
+import { keysOf } from 'omnic/misc'
+import { OmnicConfig } from 'omnic/types'
 import { mergeStrategyFactory } from './base'
-import { keysOf } from '../misc'
 
 type pipedFunction = (...args: any[]) => any[];
 
@@ -22,10 +22,22 @@ export const concatURLs = mergeStrategyFactory<URL | string, URL>((parent, child
   return new URL(child, parent)
 })
 
-export const merge = mergeStrategyFactory<object>((parent, child) => ({
-  ...parent,
-  ...child
-}), {})
+export const merge = <P, C = P>(
+  parent: P, child: C
+): P extends undefined ? C : C extends undefined ? P : P & C => {
+  const strategy = mergeStrategyFactory<P | C | (C & P)>((_p, _c) => ({
+    //@ts-ignore
+    ..._p,
+    ..._c
+    //@ts-ignore
+  }), {});
+
+  return strategy(parent, child);
+}
+
+const merged = merge({ a: 'a' }, undefined);
+const merged2 = merge(undefined, { b: 2 });
+const merged3 = merge({ a: 'a' }, { b: 2 });
 
 export const override = mergeStrategyFactory((_parent, child) => child)
 

@@ -17,6 +17,10 @@
     "strictNullChecks": true,
     "strictFunctionTypes": true,
     "noImplicitAny": false,
+    "baseUrl": ".",
+    "paths": {
+      "omnic/*": ["./lib/*"]
+    },
     "typeRoots": [
       "./lib/types",
       "@types"
