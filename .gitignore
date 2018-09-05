@@ -11,5 +11,8 @@ thumbs.db
 
 node_modules/
 
-npm-debug.log
-yarn-error.log
+coverage
+.nyc_output
+*.log
+.awcache
+.rpt2_cache
