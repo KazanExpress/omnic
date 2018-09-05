@@ -14,7 +14,7 @@
   "author": "Raiondesu <a.raiondesu@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/KazanExpress/omnic.git"
+    "url": "git@github.com:KazanExpress/omnic.git"
   },
   "license": "MIT",
   "engines": {
